@@ -68,6 +68,12 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - 작업 완료 시 프로젝트 Status를 **Done**으로 변경한다
 - 이슈 간 의존관계(blocked-by)가 설정되어 있으므로 순서를 지킨다
 
+### 병렬 실행 원칙
+
+- 작업 시작 전 GraphQL `blockedBy`/`blocking` 필드를 조회하여 의존관계 DAG를 파악한다 (`/github-operations` skill 참조)
+- 블로커가 모두 완료된(closed) 이슈는 가급적 **병렬로 진행**한다
+- 병렬 진행 시 각 이슈는 별도 worktree에서 작업한다
+
 ## 작업 시 주의사항
 
 1. **타입 정의**: `packages/shared`에 공통 타입을 중앙화한다
