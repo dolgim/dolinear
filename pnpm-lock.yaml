@@ -14,6 +14,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@dolinear/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@hono/node-server':
         specifier: ^1
         version: 1.19.9(hono@4.12.2)
@@ -45,6 +48,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@dolinear/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@tanstack/react-query':
         specifier: ^5.90.21
         version: 5.90.21(react@19.2.4)
@@ -82,6 +88,12 @@ importers:
       vite:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)
+
+  packages/shared:
+    devDependencies:
+      typescript:
+        specifier: ^5
+        version: 5.9.3
 
 packages:
 
