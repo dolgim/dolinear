@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   component: IndexPage,
-});
+})
 
 function IndexPage() {
   return (
@@ -12,5 +12,5 @@ function IndexPage() {
         <p className="text-lg text-gray-400">Project management, reimagined.</p>
       </div>
     </div>
-  );
+  )
 }
