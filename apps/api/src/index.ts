@@ -1,32 +1,32 @@
-import "dotenv/config";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { serve } from "@hono/node-server";
-import { sql } from "drizzle-orm";
-import { db } from "./db/index.js";
-import { auth } from "./auth.js";
+import 'dotenv/config'
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
+import { serve } from '@hono/node-server'
+import { sql } from 'drizzle-orm'
+import { db } from './db/index.js'
+import { auth } from './auth.js'
 
-const app = new Hono();
+const app = new Hono()
 
 app.use(
-  "*",
+  '*',
   cors({
-    origin: "http://localhost:5173",
+    origin: 'http://localhost:5173',
     credentials: true,
   }),
-);
+)
 
-app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
+app.on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw))
 
-app.get("/health", async (c) => {
+app.get('/health', async (c) => {
   try {
-    await db.execute(sql`SELECT 1`);
-    return c.json({ status: "ok", db: "connected" });
+    await db.execute(sql`SELECT 1`)
+    return c.json({ status: 'ok', db: 'connected' })
   } catch {
-    return c.json({ status: "ok", db: "disconnected" }, 500);
+    return c.json({ status: 'ok', db: 'disconnected' }, 500)
   }
-});
+})
 
 serve({ fetch: app.fetch, port: 3001 }, (info) => {
-  console.log(`API server running on http://localhost:${info.port}`);
-});
+  console.log(`API server running on http://localhost:${info.port}`)
+})

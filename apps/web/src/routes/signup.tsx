@@ -1,39 +1,39 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { authClient } from "../lib/auth";
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import { authClient } from '../lib/auth'
 
-export const Route = createFileRoute("/signup")({
+export const Route = createFileRoute('/signup')({
   component: SignupPage,
-});
+})
 
 function SignupPage() {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
     const { error: signUpError } = await authClient.signUp.email({
       name,
       email,
       password,
-    });
+    })
 
-    setLoading(false);
+    setLoading(false)
 
     if (signUpError) {
-      setError(signUpError.message ?? "Signup failed");
-      return;
+      setError(signUpError.message ?? 'Signup failed')
+      return
     }
 
-    navigate({ to: "/" });
-  };
+    navigate({ to: '/' })
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -101,17 +101,17 @@ function SignupPage() {
             disabled={loading}
             className="w-full py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Creating account..." : "Sign up"}
+            {loading ? 'Creating account...' : 'Sign up'}
           </button>
         </form>
 
         <p className="mt-4 text-center text-sm text-gray-500">
-          Already have an account?{" "}
+          Already have an account?{' '}
           <Link to="/login" className="text-indigo-400 hover:text-indigo-300">
             Sign in
           </Link>
         </p>
       </div>
     </div>
-  );
+  )
 }
