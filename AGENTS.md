@@ -65,7 +65,7 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - 작업 시작 시 해당 이슈를 확인하고 체크리스트를 따른다
 - 작업 시작 시 프로젝트 Status를 **In Progress**로 변경한다
 - PR 생성 시 `Closes #N`으로 이슈를 참조한다
-- 작업 완료(PR 머지 후) 시 프로젝트 Status를 **Done**으로 변경한다 (리더만 수행)
+- PR 머지 후 프로젝트 Status가 **Done**으로 변경된다 (`Closes #N`으로 이슈 자동 닫힘)
 - 이슈 간 의존관계(blocked-by)가 설정되어 있으므로 순서를 지킨다
 
 ### 병렬 실행 원칙
@@ -104,8 +104,6 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - 구현 에이전트가 프로젝트 Status를 Done으로 변경하지 않는다
 
 ## 에이전트 협업 규칙
-
-> Phase 1 회고에서 도출된 프로세스 개선 사항
 
 ### 1. Project Status 관리 규칙
 
