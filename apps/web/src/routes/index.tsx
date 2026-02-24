@@ -1,28 +1,28 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: IndexPage,
-})
+});
 
 interface HealthResponse {
-  status: string
-  db: string
+  status: string;
+  db: string;
 }
 
 function IndexPage() {
   const { data, isLoading, isError } = useQuery<HealthResponse>({
-    queryKey: ['health'],
+    queryKey: ["health"],
     queryFn: async () => {
-      const res = await fetch('http://localhost:3001/health')
+      const res = await fetch("http://localhost:3001/health");
       if (!res.ok) {
-        const body = await res.json()
-        return body as HealthResponse
+        const body = await res.json();
+        return body as HealthResponse;
       }
-      return res.json()
+      return res.json();
     },
     refetchInterval: 10000,
-  })
+  });
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -38,26 +38,24 @@ function IndexPage() {
           {isLoading && (
             <p className="text-gray-400">Checking API status...</p>
           )}
-          {isError && (
-            <p className="text-red-400">API unreachable</p>
-          )}
+          {isError && <p className="text-red-400">API unreachable</p>}
           {data && (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span
-                  className={`w-2 h-2 rounded-full ${data.status === 'ok' ? 'bg-green-400' : 'bg-red-400'}`}
+                  className={`w-2 h-2 rounded-full ${data.status === "ok" ? "bg-green-400" : "bg-red-400"}`}
                 />
                 <span className="text-gray-300">
-                  API: {data.status === 'ok' ? 'Healthy' : 'Unhealthy'}
+                  API: {data.status === "ok" ? "Healthy" : "Unhealthy"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <span
-                  className={`w-2 h-2 rounded-full ${data.db === 'connected' ? 'bg-green-400' : 'bg-red-400'}`}
+                  className={`w-2 h-2 rounded-full ${data.db === "connected" ? "bg-green-400" : "bg-red-400"}`}
                 />
                 <span className="text-gray-300">
-                  Database:{' '}
-                  {data.db === 'connected' ? 'Connected' : 'Disconnected'}
+                  Database:{" "}
+                  {data.db === "connected" ? "Connected" : "Disconnected"}
                 </span>
               </div>
             </div>
@@ -65,5 +63,5 @@ function IndexPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
