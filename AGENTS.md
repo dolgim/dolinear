@@ -112,6 +112,8 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
    - 특정 패키지: `pnpm --filter <pkg> add <package>`
 3. **최신 라이브러리**: 새 의존성 추가 시 최신 버전을 사용한다
 4. **AGENTS.md 유지보수**: 이슈 작업 중 새 명령어, 패턴, 컨벤션이 생기면 이 파일을 업데이트한다
+5. **패키지 실행**: `npx` 대신 `pnpm exec`를 사용한다 (pnpm 모노레포 환경)
+6. **DB 스키마 관리**: Drizzle schema(`apps/api/src/db/schema.ts`)를 single source of truth로 사용한다. 테스트 셋업 등에서 raw SQL로 테이블을 직접 생성하지 않는다 (`drizzle-kit push` 사용)
 
 ## 작업 규칙
 
@@ -148,3 +150,14 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - 리뷰 에이전트는 코드 리뷰에 더해 **런타임 검증도 실제로 수행**해야 한다 (서버 실행, curl 테스트 등)
 - PR의 테스트 플랜에 미체크 항목이 있으면 LGTM을 주지 않는다
 - 테스트 플랜의 모든 항목이 체크되어야 리뷰 완료로 간주한다
+
+### 3. PR 머지 규칙
+
+- PR 머지는 **사용자의 명시적 승인 후에만** 수행한다 ("머지해줘" 등 직접적인 지시 필요)
+- 사용자가 리뷰를 완료하지 않은 상태에서 선제적으로 머지하지 않는다
+- 에이전트가 리뷰를 완료했더라도, 머지 권한은 사용자에게 있다
+
+### 4. 워크트리 정리 규칙
+
+- 에이전트 작업 완료 후 생성한 worktree를 `git worktree remove <path>`로 정리한다
+- 정리가 불가능한 경우 리더에게 정리를 요청한다
