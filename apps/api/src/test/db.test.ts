@@ -1,13 +1,14 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
 import { createTestDb } from './helpers.js'
-import { users } from '../db/schema.js'
+import { user } from '../db/schema.js'
+import { randomUUID } from 'node:crypto'
 
 describe('Database', () => {
   const { db, client } = createTestDb()
 
   beforeEach(async () => {
-    await db.execute(sql`TRUNCATE TABLE users CASCADE`)
+    await db.execute(sql`TRUNCATE TABLE "user" CASCADE`)
   })
 
   afterAll(async () => {
@@ -21,8 +22,12 @@ describe('Database', () => {
 
   it('should insert and query a user', async () => {
     const [inserted] = await db
-      .insert(users)
-      .values({ name: 'Test User', email: 'test@example.com' })
+      .insert(user)
+      .values({
+        id: randomUUID(),
+        name: 'Test User',
+        email: 'test@example.com',
+      })
       .returning()
 
     expect(inserted).toBeDefined()
@@ -33,18 +38,26 @@ describe('Database', () => {
 
     const [found] = await db
       .select()
-      .from(users)
-      .where(eq(users.email, 'test@example.com'))
+      .from(user)
+      .where(eq(user.email, 'test@example.com'))
 
     expect(found).toBeDefined()
     expect(found.name).toBe('Test User')
   })
 
   it('should enforce unique email constraint', async () => {
-    await db.insert(users).values({ name: 'User A', email: 'unique@example.com' })
+    await db.insert(user).values({
+      id: randomUUID(),
+      name: 'User A',
+      email: 'unique@example.com',
+    })
 
     await expect(
-      db.insert(users).values({ name: 'User B', email: 'unique@example.com' })
+      db.insert(user).values({
+        id: randomUUID(),
+        name: 'User B',
+        email: 'unique@example.com',
+      }),
     ).rejects.toThrow()
   })
 })

@@ -4,10 +4,19 @@ import { cors } from 'hono/cors'
 import { serve } from '@hono/node-server'
 import { sql } from 'drizzle-orm'
 import { db } from './db/index.js'
+import { auth } from './auth.js'
 
 const app = new Hono()
 
-app.use('*', cors({ origin: 'http://localhost:5173' }))
+app.use(
+  '*',
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }),
+)
+
+app.on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw))
 
 app.get('/health', async (c) => {
   try {

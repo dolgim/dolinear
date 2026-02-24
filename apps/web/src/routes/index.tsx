@@ -35,12 +35,8 @@ function IndexPage() {
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
             System Status
           </h2>
-          {isLoading && (
-            <p className="text-gray-400">Checking API status...</p>
-          )}
-          {isError && (
-            <p className="text-red-400">API unreachable</p>
-          )}
+          {isLoading && <p className="text-gray-400">Checking API status...</p>}
+          {isError && <p className="text-red-400">API unreachable</p>}
           {data && (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
