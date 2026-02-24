@@ -1,5 +1,7 @@
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql'
-import postgres from 'postgres'
+import { execSync } from 'node:child_process'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 let container: StartedPostgreSqlContainer
 
@@ -13,19 +15,13 @@ export async function setup() {
   const connectionString = container.getConnectionUri()
   process.env.DATABASE_URL = connectionString
 
-  // Apply schema using raw SQL
-  const client = postgres(connectionString)
-
-  await client`
-    CREATE TABLE IF NOT EXISTS users (
-      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL UNIQUE,
-      created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
-    )
-  `
-
-  await client.end()
+  // Apply schema using drizzle-kit push (stays in sync with schema.ts)
+  const apiDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
+  execSync('npx drizzle-kit push --force', {
+    cwd: apiDir,
+    env: { ...process.env, DATABASE_URL: connectionString },
+    stdio: 'pipe',
+  })
 }
 
 export async function teardown() {
