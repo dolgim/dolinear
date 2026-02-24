@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# $3 = flag: 1 = branch checkout / worktree add, 0 = file checkout
+if [ "$3" != "1" ]; then
+  exit 0
+fi
+
+# Only run if Docker is available and the DB container is running
+if ! docker compose ps -q db >/dev/null 2>&1; then
+  echo "[post-checkout] PostgreSQL container is not running. Run 'pnpm db:up' then 'pnpm db:setup' to create a branch-specific database."
+  exit 0
+fi
+
+echo "[post-checkout] Setting up branch-specific database..."
+bash scripts/setup-db.sh
