@@ -11,6 +11,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@dolinear/shared": "workspace:*",
     "@hono/node-server": "^1",
     "drizzle-orm": "^0.45.1",
     "hono": "^4",
