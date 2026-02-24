@@ -14,9 +14,38 @@
 
 ## 개발 명령어
 
-<!-- 이슈 작업 중 새 명령어가 추가되면 이 섹션을 업데이트할 것 -->
+```bash
+# 전체 서비스 실행
+pnpm dev                        # turbo dev (web + api 동시 실행)
+pnpm build                      # turbo build
 
-(아직 프로젝트 초기화 전 — 이슈 #1~#10 진행에 따라 채워질 예정)
+# 데이터베이스
+pnpm db:up                      # docker compose up -d (PostgreSQL 시작)
+pnpm db:down                    # docker compose down
+pnpm db:setup                   # 현재 브랜치 기반 전용 DB 생성 + .env 업데이트
+
+# Drizzle ORM (apps/api 내)
+pnpm --filter api db:push       # 스키마를 DB에 반영
+pnpm --filter api db:generate   # 마이그레이션 생성
+pnpm --filter api db:studio     # Drizzle Studio 실행
+
+# 테스트
+pnpm --filter api test          # Vitest + Testcontainers (Docker 필요)
+
+# 코드 품질
+pnpm lint                       # ESLint
+pnpm format                     # Prettier
+```
+
+### 워크트리에서 작업 시작
+
+`git worktree add` 또는 `git checkout` 시 `post-checkout` hook이 자동으로 `db:setup`을 실행하여 브랜치별 전용 DB를 생성한다. Docker가 꺼져 있으면 안내 메시지만 출력되므로, 이 경우 수동으로 실행한다:
+
+```bash
+pnpm db:up          # PostgreSQL 시작
+pnpm db:setup       # 브랜치별 DB 생성 + .env 업데이트
+pnpm --filter api db:push   # 스키마 반영
+```
 
 ## Git 워크플로우
 
