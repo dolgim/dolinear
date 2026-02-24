@@ -6,6 +6,7 @@
     "build": "turbo build",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
+    "db:setup": "bash scripts/setup-db.sh",
     "lint": "eslint .",
     "format": "prettier --write .",
     "prepare": "husky"
