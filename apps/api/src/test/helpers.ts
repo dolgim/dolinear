@@ -3,10 +3,13 @@ import { sql } from 'drizzle-orm'
 import postgres from 'postgres'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { createMiddleware } from 'hono/factory'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import * as schema from '../db/schema/index.js'
+import { workspacesRoute } from '../routes/workspaces.js'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import type { Env } from '../types.js'
 
 export function createTestDb() {
   const connectionString = process.env.DATABASE_URL!
@@ -28,7 +31,35 @@ export function createTestApp(db: PostgresJsDatabase<typeof schema>) {
     trustedOrigins: ['http://localhost:5173'],
   })
 
-  const app = new Hono()
+  const testAuthMiddleware = createMiddleware<Env>(async (c, next) => {
+    const path = c.req.path
+
+    if (path === '/health' || path.startsWith('/api/auth/')) {
+      return next()
+    }
+
+    const session = await auth.api.getSession({
+      headers: c.req.raw.headers,
+    })
+
+    if (!session) {
+      return c.json(
+        {
+          error: 'UnauthorizedError',
+          message: 'Unauthorized',
+          statusCode: 401,
+        },
+        401,
+      )
+    }
+
+    c.set('user', session.user)
+    c.set('session', session.session)
+
+    return next()
+  })
+
+  const app = new Hono<Env>()
 
   app.use(
     '*',
@@ -39,6 +70,8 @@ export function createTestApp(db: PostgresJsDatabase<typeof schema>) {
   )
 
   app.on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw))
+  app.use('*', testAuthMiddleware)
+  app.route('/api/workspaces', workspacesRoute)
 
   return { app, auth }
 }
@@ -98,6 +131,8 @@ export async function createAuthenticatedRequest(
 }
 
 export async function cleanupDatabase(db: PostgresJsDatabase<typeof schema>) {
+  await db.execute(sql`TRUNCATE TABLE "workspace_member" CASCADE`)
+  await db.execute(sql`TRUNCATE TABLE "workspace" CASCADE`)
   await db.execute(sql`TRUNCATE TABLE "verification" CASCADE`)
   await db.execute(sql`TRUNCATE TABLE "account" CASCADE`)
   await db.execute(sql`TRUNCATE TABLE "session" CASCADE`)

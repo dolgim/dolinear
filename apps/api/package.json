@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "db:push": "drizzle-kit push",
-    "db:generate": "drizzle-kit generate",
+    "db:push": "node --import tsx node_modules/drizzle-kit/bin.cjs push",
+    "db:generate": "node --import tsx node_modules/drizzle-kit/bin.cjs generate",
     "db:studio": "drizzle-kit studio",
     "test": "vitest run"
   },

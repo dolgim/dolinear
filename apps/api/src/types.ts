@@ -8,3 +8,10 @@ export type Env = {
     session: Session['session']
   }
 }
+
+export type WorkspaceEnv = {
+  Variables: Env['Variables'] & {
+    workspace: { id: string; name: string; slug: string; ownerId: string }
+    workspaceMember: { id: string; role: string }
+  }
+}
