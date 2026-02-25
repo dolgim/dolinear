@@ -1,5 +1,11 @@
 import { randomUUID } from 'node:crypto'
-import type { User, Workspace, Team, Issue } from '@dolinear/shared'
+import type {
+  User,
+  Workspace,
+  WorkspaceMember,
+  Team,
+  Issue,
+} from '@dolinear/shared'
 
 export function buildUser(overrides?: Partial<User>): User {
   return {
@@ -20,6 +26,20 @@ export function buildWorkspace(overrides?: Partial<Workspace>): Workspace {
     name: 'Test Workspace',
     slug: `workspace-${randomUUID().slice(0, 8)}`,
     ownerId: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ...overrides,
+  }
+}
+
+export function buildWorkspaceMember(
+  overrides?: Partial<WorkspaceMember>,
+): WorkspaceMember {
+  return {
+    id: randomUUID(),
+    workspaceId: randomUUID(),
+    userId: randomUUID(),
+    role: 'member',
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
