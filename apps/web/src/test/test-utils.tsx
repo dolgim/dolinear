@@ -1,4 +1,8 @@
-import { render, type RenderOptions } from '@testing-library/react'
+import {
+  render,
+  type RenderOptions,
+  type RenderResult,
+} from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactElement, ReactNode } from 'react'
 
@@ -22,7 +26,7 @@ function AllProviders({ children }: { children: ReactNode }) {
 function customRender(
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>,
-) {
+): RenderResult {
   return render(ui, { wrapper: AllProviders, ...options })
 }
 
