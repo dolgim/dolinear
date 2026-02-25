@@ -8,6 +8,9 @@ import { fileURLToPath } from 'node:url'
 
 let container: StartedPostgreSqlContainer
 
+// Global setup: starts a PostgreSQL container and applies the schema.
+// Individual test files should use cleanupDatabase() from helpers.ts
+// in beforeEach/afterEach to reset data between tests.
 export async function setup() {
   container = await new PostgreSqlContainer('postgres:15')
     .withDatabase('dolinear_test')
