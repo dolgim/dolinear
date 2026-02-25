@@ -136,6 +136,7 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - main 브랜치에 직접 커밋하지 않는다 (문서 업데이트 제외)
 - 여러 이슈를 한꺼번에 구현하지 않는다
 - 동작 검증 없이 다음 단계로 넘어가지 않는다
+- 병렬 에이전트에게 메인 레포에서 `git checkout -b`를 지시하지 않는다 (워크트리 격리 사용)
 
 ## 에이전트 협업
 
@@ -178,6 +179,25 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - 작업 시작 전 GraphQL `blockedBy`/`blocking` 필드를 조회하여 의존관계 DAG를 파악하고 웨이브를 구성한다 (`/github-operations` skill 참조)
 - 웨이브 내 이슈들은 Agent team을 사용하여 **병렬로 진행**한다
 - 병렬 진행 시 각 이슈는 별도 worktree에서 작업한다
+
+#### 워크트리 격리 규칙
+
+병렬 에이전트는 각자 별도 워크트리에서 작업한다. **워크트리 생명주기는 리더가 전담**하며, 구현 에이전트는 워크트리를 생성/삭제하지 않는다. 다음 규칙을 반드시 준수한다:
+
+**리더 (메인 에이전트):**
+
+- **워크트리 생성**: 에이전트 스폰 **전에** `git worktree add .claude/worktrees/<agent-name> -b <branch> main` 실행
+- **에이전트 스폰**: 프롬프트에 워크트리 절대 경로를 전달하고, 에이전트가 `cd`로 이동하도록 지시한다
+- **워크트리 정리**: PR 머지 후 `git worktree remove <path>` + `git branch -D <branch>` → 팀원 종료
+- `isolation: "worktree"` 옵션은 사용하지 않는다 (teammate에서 미동작)
+
+**구현 에이전트:**
+
+- 프롬프트에 지정된 워크트리 경로로 `cd`
+- `pwd`로 `.claude/worktrees/` 하위인지 확인 (아니면 즉시 작업 중단 + 리더에게 보고)
+- 셋업 순서: `cd <path>` → `pnpm install` → `pnpm db:setup` → `pnpm --filter api db:push`
+- `git worktree add`, `git worktree remove`, `git checkout -b` 사용 금지
+- 메인 레포 디렉토리로 `cd`하지 않는다
 
 #### 웨이브 완료 & 전환
 
