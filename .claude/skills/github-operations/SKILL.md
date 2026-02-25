@@ -129,6 +129,16 @@ gh api graphql \
   }'
 ```
 
+## 배경: Tasklist → Sub-issues 전환
+
+GitHub의 **Tasklist blocks**는 2025-04-30부로 retired되었으며 **Sub-issues**로 대체되었다.
+
+- `trackedIssues`/`trackedInIssues`: 레거시 Tasklist 추적 필드. 새 프로젝트에서 사용 금지
+- `parent`/`subIssues`: Sub-issues 기반 필드 (계층 최대 8단계, `GraphQL-Features: sub_issues` 헤더 필수)
+- `blockedBy`/`blocking`: 이슈 간 의존관계 필드 (Tasklist과 무관)
+
+새 프로젝트에서는 `parent`/`subIssues`와 `blockedBy`/`blocking`을 사용한다.
+
 ## 주의사항
 
 - Sub-issues API는 `GraphQL-Features: sub_issues` 헤더 없이 호출하면 실패한다
