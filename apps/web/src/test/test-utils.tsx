@@ -27,5 +27,3 @@ function customRender(
 }
 
 export { customRender as render }
-export { userEvent } from '@testing-library/user-event'
-export { screen, within, waitFor } from '@testing-library/react'
