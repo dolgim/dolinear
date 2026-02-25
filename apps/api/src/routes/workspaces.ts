@@ -8,6 +8,7 @@ import { validateRequest } from '../lib/validation.js'
 import { handleError, NotFoundError, ValidationError } from '../lib/errors.js'
 import { generateSlug, generateUniqueSlug } from '../lib/slug.js'
 import { requireWorkspaceMember } from '../middleware/workspace.js'
+import { teamsRoute } from './teams.js'
 import type { Env, WorkspaceEnv } from '../types.js'
 
 const createWorkspaceSchema = z.object({
@@ -217,6 +218,8 @@ wsRoute.get('/members', requireWorkspaceMember(), async (c) => {
 
   return c.json({ data: members })
 })
+
+wsRoute.route('/teams', teamsRoute)
 
 workspacesRoute.route('/:workspaceId', wsRoute)
 
