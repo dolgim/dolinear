@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useWorkspaces } from '@/hooks/use-workspaces'
 import { WorkspaceCard } from '@/components/workspace/WorkspaceCard'
 import { CreateWorkspaceDialog } from '@/components/workspace/CreateWorkspaceDialog'
@@ -12,6 +12,7 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 function DashboardPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const { data: workspaces, isLoading } = useWorkspaces()
+  const navigate = useNavigate()
 
   return (
     <div>
@@ -40,7 +41,10 @@ function DashboardPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSuccess={(ws) => {
-          window.location.href = `/workspace/${ws.slug}`
+          navigate({
+            to: '/workspace/$workspaceSlug',
+            params: { workspaceSlug: ws.slug },
+          })
         }}
       />
     </div>
