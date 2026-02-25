@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
-import { createTestDb } from './helpers.js'
+import { createTestDb, cleanupDatabase } from './helpers.js'
 import { user } from '../db/schema/index.js'
 import { randomUUID } from 'node:crypto'
 
@@ -8,7 +8,7 @@ describe('Database', () => {
   const { db, client } = createTestDb()
 
   beforeEach(async () => {
-    await db.execute(sql`TRUNCATE TABLE "user" CASCADE`)
+    await cleanupDatabase(db)
   })
 
   afterAll(async () => {
