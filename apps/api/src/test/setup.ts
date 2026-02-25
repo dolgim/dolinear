@@ -23,7 +23,7 @@ export async function setup() {
     path.dirname(fileURLToPath(import.meta.url)),
     '../..',
   )
-  execSync('npx drizzle-kit push --force', {
+  execSync('pnpm exec drizzle-kit push --force', {
     cwd: apiDir,
     env: { ...process.env, DATABASE_URL: connectionString },
     stdio: 'pipe',

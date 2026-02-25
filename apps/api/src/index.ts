@@ -2,9 +2,8 @@ import 'dotenv/config'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serve } from '@hono/node-server'
-import { sql } from 'drizzle-orm'
-import { db } from './db/index.js'
 import { auth } from './auth.js'
+import { healthRoute } from './routes/index.js'
 
 const app = new Hono()
 
@@ -18,14 +17,7 @@ app.use(
 
 app.on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw))
 
-app.get('/health', async (c) => {
-  try {
-    await db.execute(sql`SELECT 1`)
-    return c.json({ status: 'ok', db: 'connected' })
-  } catch {
-    return c.json({ status: 'ok', db: 'disconnected' }, 500)
-  }
-})
+app.route('/health', healthRoute)
 
 serve({ fetch: app.fetch, port: 3001 }, (info) => {
   console.log(`API server running on http://localhost:${info.port}`)
