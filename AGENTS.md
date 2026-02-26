@@ -190,7 +190,8 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 
 - **워크트리 생성**: 에이전트 스폰 **전에** `git worktree add .claude/worktrees/<agent-name> -b <branch> main` 실행
 - **에이전트 스폰**: 프롬프트에 워크트리 절대 경로를 전달하고, 에이전트가 `cd`로 이동하도록 지시한다
-- **워크트리 정리**: PR 머지 후 `git worktree remove <path>` + `git branch -D <branch>` → 팀원 종료
+- **PR 머지 순서**: 팀원 종료 → `git worktree remove <path>` → `gh pr merge <PR> --squash --delete-branch`
+  - `gh pr merge --delete-branch`는 워크트리가 브랜치를 점유하면 실패한다 (GitHub CLI #3442). 반드시 워크트리를 먼저 제거한다
 - `isolation: "worktree"` 옵션은 사용하지 않는다 (teammate에서 미동작)
 
 **구현 에이전트:**
@@ -212,5 +213,5 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - 팀원의 작업 완료 = PR 생성이 아니라 **PR 머지**이다
 - PR 생성 후에도 리뷰 피드백 대응을 위해 팀원(구현 에이전트)을 유지한다
 - 리뷰에서 코드 변경 요청이 오면 해당 구현 에이전트가 수정한다
-- PR 머지 후 워크트리 정리(`git worktree remove <path>`) → 팀원 종료
+- 리뷰 완료 + 사용자 머지 승인 후: 팀원 종료 → 워크트리 정리(`git worktree remove <path>`) → PR 머지(`gh pr merge <PR> --squash --delete-branch`)
 - 사용자가 명시적으로 종료를 지시하면 즉시 제거 가능
