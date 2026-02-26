@@ -16,8 +16,23 @@ vi.mock('@tanstack/react-router', async () => {
   return {
     ...actual,
     useNavigate: () => mockNavigate,
+    useParams: () => ({}),
+    Link: ({
+      children,
+      ...props
+    }: { children: React.ReactNode } & Record<string, unknown>) => (
+      <a {...props}>{children}</a>
+    ),
   }
 })
+
+vi.mock('@/hooks/use-workspaces', () => ({
+  useWorkspaces: () => ({ data: [] }),
+}))
+
+vi.mock('@/hooks/use-teams', () => ({
+  useTeams: () => ({ data: [] }),
+}))
 
 describe('AppShell', () => {
   beforeEach(() => {
@@ -34,18 +49,6 @@ describe('AppShell', () => {
     expect(screen.getByTestId('sidebar')).toBeInTheDocument()
     expect(screen.getByText('DOLinear')).toBeInTheDocument()
     expect(screen.getByText('Test Content')).toBeInTheDocument()
-  })
-
-  it('renders navigation placeholder links', () => {
-    render(
-      <AppShell>
-        <div />
-      </AppShell>,
-    )
-
-    expect(screen.getByText('My Issues')).toBeInTheDocument()
-    expect(screen.getByText('Projects')).toBeInTheDocument()
-    expect(screen.getByText('Views')).toBeInTheDocument()
   })
 
   it('renders logout button', () => {
