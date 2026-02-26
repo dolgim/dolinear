@@ -26,7 +26,7 @@ export async function setup() {
     path.dirname(fileURLToPath(import.meta.url)),
     '../..',
   )
-  execSync('node --import tsx node_modules/drizzle-kit/bin.cjs push --force', {
+  execSync('node node_modules/drizzle-kit/bin.cjs push --force', {
     cwd: apiDir,
     env: { ...process.env, DATABASE_URL: connectionString },
     stdio: 'pipe',
