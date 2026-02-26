@@ -9,6 +9,7 @@ export default defineConfig({
     './src/db/schema/label.ts',
     './src/db/schema/team.ts',
     './src/db/schema/workflow-state.ts',
+    './src/db/schema/issue.ts',
   ],
   dialect: 'postgresql',
   dbCredentials: {

@@ -62,17 +62,20 @@ export function buildTeam(overrides?: Partial<Team>): Team {
 export function buildIssue(overrides?: Partial<Issue>): Issue {
   return {
     id: randomUUID(),
+    teamId: randomUUID(),
+    number: 1,
+    identifier: 'TST-1',
     title: 'Test Issue',
     description: null,
-    status: 'todo',
-    priority: 'none',
-    number: 1,
-    teamId: randomUUID(),
+    workflowStateId: randomUUID(),
+    priority: 0,
     assigneeId: null,
     creatorId: randomUUID(),
-    parentId: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    dueDate: null,
+    estimate: null,
+    sortOrder: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     ...overrides,
   }
 }

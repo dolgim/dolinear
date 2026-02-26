@@ -17,6 +17,7 @@ import {
   workflowStatesRoute,
   createDefaultWorkflowStates,
 } from './workflow-states.ts'
+import { issuesRoute } from './issues.ts'
 import type { WorkspaceEnv } from '../types.ts'
 
 const IDENTIFIER_REGEX = /^[A-Z]{2,5}$/
@@ -312,5 +313,6 @@ teamsRoute.get('/:teamId/members', requireWorkspaceMember(), async (c) => {
 })
 
 teamsRoute.route('/:teamId/states', workflowStatesRoute)
+teamsRoute.route('/:teamId/issues', issuesRoute)
 
 teamsRoute.onError(handleError)
