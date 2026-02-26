@@ -1,7 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { ApiResponse, Issue, IssuePriority } from '@dolinear/shared'
+import type { ApiResponse, Issue, IssuePriority, Label } from '@dolinear/shared'
 import { apiClient } from '@/lib/api-client'
 import { queryKeys } from '@/lib/query-keys'
+
+export type IssueWithLabels = Issue & {
+  labels: Pick<Label, 'id' | 'name' | 'color'>[]
+}
 
 export function useIssues(teamId: string) {
   return useQuery({
@@ -20,6 +24,23 @@ export function useIssue(id: string) {
     queryFn: () =>
       apiClient.get<ApiResponse<Issue>>(`/issues/${id}`).then((r) => r.data),
     enabled: !!id,
+  })
+}
+
+export function useIssueByIdentifier(
+  workspaceId: string,
+  teamId: string,
+  identifier: string,
+) {
+  return useQuery({
+    queryKey: queryKeys.issues.detail(identifier),
+    queryFn: () =>
+      apiClient
+        .get<
+          ApiResponse<IssueWithLabels>
+        >(`/workspaces/${workspaceId}/teams/${teamId}/issues/${identifier}`)
+        .then((r) => r.data),
+    enabled: !!workspaceId && !!teamId && !!identifier,
   })
 }
 
@@ -47,19 +68,26 @@ export function useUpdateIssue() {
 
   return useMutation({
     mutationFn: ({
-      id,
+      workspaceId,
+      teamId,
+      identifier,
       ...data
     }: {
-      id: string
+      workspaceId: string
+      teamId: string
+      identifier: string
       title?: string
       description?: string | null
-      status?: string
+      workflowStateId?: string
       priority?: IssuePriority
       assigneeId?: string | null
-      parentId?: string | null
+      dueDate?: string | null
+      estimate?: number | null
     }) =>
       apiClient
-        .patch<ApiResponse<Issue>>(`/issues/${id}`, data)
+        .patch<
+          ApiResponse<Issue>
+        >(`/workspaces/${workspaceId}/teams/${teamId}/issues/${identifier}`, data)
         .then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.issues.all })
