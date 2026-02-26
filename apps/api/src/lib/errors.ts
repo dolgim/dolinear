@@ -54,6 +54,13 @@ export class ForbiddenError extends AppError {
   }
 }
 
+export class ConflictError extends AppError {
+  constructor(message: string) {
+    super(409, message)
+    this.name = 'ConflictError'
+  }
+}
+
 export function handleError(err: Error, c: Context) {
   if (err instanceof AppError) {
     return c.json(err.toResponse(), err.statusCode as 400)

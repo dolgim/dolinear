@@ -50,7 +50,8 @@ export function buildTeam(overrides?: Partial<Team>): Team {
   return {
     id: randomUUID(),
     name: 'Test Team',
-    identifier: `TM-${randomUUID().slice(0, 4).toUpperCase()}`,
+    identifier: 'TST',
+    issueCounter: 0,
     workspaceId: randomUUID(),
     createdAt: new Date(),
     updatedAt: new Date(),
