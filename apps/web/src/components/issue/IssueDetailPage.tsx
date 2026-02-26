@@ -39,7 +39,7 @@ export function IssueDetailPage({
     isLoading,
     error,
   } = useIssueByIdentifier(workspace.id, team.id, issueIdentifier)
-  const { data: workflowStates } = useWorkflowStates(workspace.id, team.id)
+  const { data: workflowStates } = useWorkflowStates(team.id)
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
