@@ -13,6 +13,10 @@ import {
   ForbiddenError,
 } from '../lib/errors.ts'
 import { requireWorkspaceMember } from '../middleware/workspace.ts'
+import {
+  workflowStatesRoute,
+  createDefaultWorkflowStates,
+} from './workflow-states.ts'
 import type { WorkspaceEnv } from '../types.ts'
 
 const IDENTIFIER_REGEX = /^[A-Z]{2,5}$/
@@ -87,6 +91,9 @@ teamsRoute.post('/', requireWorkspaceMember(['owner', 'admin']), async (c) => {
       createdAt: now,
       updatedAt: now,
     })
+
+    // Create default workflow states
+    await createDefaultWorkflowStates(teamId, tx)
   })
 
   const [created] = await db
@@ -303,5 +310,7 @@ teamsRoute.get('/:teamId/members', requireWorkspaceMember(), async (c) => {
 
   return c.json({ data: members })
 })
+
+teamsRoute.route('/:teamId/states', workflowStatesRoute)
 
 teamsRoute.onError(handleError)
