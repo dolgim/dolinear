@@ -7,8 +7,10 @@ export { useTeams, useTeam, useCreateTeam } from './use-teams'
 export {
   useIssues,
   useIssue,
+  useIssueByIdentifier,
   useCreateIssue,
   useUpdateIssue,
+  type IssueWithLabels,
 } from './use-issues'
 export { useLabels, useCreateLabel } from './use-labels'
 export { useComments, useCreateComment } from './use-comments'

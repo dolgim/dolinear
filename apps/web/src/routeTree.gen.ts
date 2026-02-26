@@ -21,6 +21,7 @@ import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteImpo
 import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issues/index'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/backlog/index'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/active/index'
+import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -97,6 +98,15 @@ const AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute =
         AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRoute,
     } as any,
   )
+const AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute =
+  AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRouteImport.update(
+    {
+      id: '/issue/$issueIdentifier',
+      path: '/issue/$issueIdentifier',
+      getParentRoute: () =>
+        AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRoute,
+    } as any,
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -107,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/workspace/$workspaceSlug/': typeof AuthenticatedWorkspaceWorkspaceSlugIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren
   '/workspace/$workspaceSlug/my-issues/': typeof AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute
+  '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/active/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/backlog/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/issues/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRoute
@@ -119,6 +130,7 @@ export interface FileRoutesByTo {
   '/workspace/$workspaceSlug': typeof AuthenticatedWorkspaceWorkspaceSlugIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren
   '/workspace/$workspaceSlug/my-issues': typeof AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute
+  '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/active': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/backlog': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/issues': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRoute
@@ -134,6 +146,7 @@ export interface FileRoutesById {
   '/_authenticated/workspace/$workspaceSlug/': typeof AuthenticatedWorkspaceWorkspaceSlugIndexRoute
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren
   '/_authenticated/workspace/$workspaceSlug/my-issues/': typeof AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute
+  '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/active/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/backlog/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issues/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRoute
@@ -149,6 +162,7 @@ export interface FileRouteTypes {
     | '/workspace/$workspaceSlug/'
     | '/workspace/$workspaceSlug/team/$teamIdentifier'
     | '/workspace/$workspaceSlug/my-issues/'
+    | '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/active/'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/backlog/'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/issues/'
@@ -161,6 +175,7 @@ export interface FileRouteTypes {
     | '/workspace/$workspaceSlug'
     | '/workspace/$workspaceSlug/team/$teamIdentifier'
     | '/workspace/$workspaceSlug/my-issues'
+    | '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/active'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/backlog'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/issues'
@@ -175,6 +190,7 @@ export interface FileRouteTypes {
     | '/_authenticated/workspace/$workspaceSlug/'
     | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier'
     | '/_authenticated/workspace/$workspaceSlug/my-issues/'
+    | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
     | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/active/'
     | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/backlog/'
     | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issues/'
@@ -273,10 +289,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRouteImport
       parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRoute
     }
+    '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier': {
+      id: '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
+      path: '/issue/$issueIdentifier'
+      fullPath: '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
+      preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRouteImport
+      parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRoute
+    }
   }
 }
 
 interface AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteChildren {
+  AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute
   AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute
   AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute
   AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRoute
@@ -284,6 +308,8 @@ interface AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteChildren {
 
 const AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteChildren: AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteChildren =
   {
+    AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute:
+      AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute,
     AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute:
       AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute,
     AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute:

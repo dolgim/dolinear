@@ -13,6 +13,8 @@ export const queryKeys = {
   issues: {
     all: ['issues'] as const,
     detail: (id: string) => ['issues', id] as const,
+    detailByIdentifier: (identifier: string) =>
+      ['issues', 'identifier', identifier] as const,
     list: (filters?: Record<string, unknown>) =>
       ['issues', 'list', filters] as const,
   },
