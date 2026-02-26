@@ -1,11 +1,11 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute(
-  '/_authenticated/workspace/$workspaceSlug',
+  '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier',
 )({
-  component: WorkspaceLayout,
+  component: TeamLayout,
 })
 
-function WorkspaceLayout() {
+function TeamLayout() {
   return <Outlet />
 }
