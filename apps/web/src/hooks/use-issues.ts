@@ -25,6 +25,15 @@ export interface IssueListFilters {
   pageSize?: number
 }
 
+export function hasActiveFilters(filters: IssueListFilters): boolean {
+  return !!(
+    filters.workflowStateId ||
+    filters.priority !== undefined ||
+    filters.assigneeId ||
+    filters.labelId
+  )
+}
+
 export function useIssues(
   workspaceId: string,
   teamId: string,

@@ -1,7 +1,7 @@
 import type { WorkflowState, Label, IssuePriority } from '@dolinear/shared'
 import { PRIORITY_LABELS } from '@dolinear/shared'
 import type { TeamMemberWithUser } from '@/hooks/use-team-members'
-import type { IssueListFilters } from '@/hooks/use-issues'
+import { hasActiveFilters, type IssueListFilters } from '@/hooks/use-issues'
 import {
   Select,
   SelectTrigger,
@@ -58,7 +58,10 @@ export function FilterBar({
           filters.priority !== undefined ? String(filters.priority) : '__all__'
         }
         onValueChange={(v) =>
-          updateFilter('priority', v === '__all__' ? undefined : v)
+          onFiltersChange({
+            ...filters,
+            priority: v === '__all__' ? undefined : Number(v),
+          })
         }
       >
         <SelectTrigger className="h-7 w-auto min-w-[100px] text-xs border-gray-700">
@@ -121,14 +124,5 @@ export function FilterBar({
         </button>
       )}
     </div>
-  )
-}
-
-function hasActiveFilters(filters: IssueListFilters): boolean {
-  return !!(
-    filters.workflowStateId ||
-    filters.priority !== undefined ||
-    filters.assigneeId ||
-    filters.labelId
   )
 }

@@ -11,6 +11,7 @@ export {
   useCreateIssue,
   useUpdateIssue,
   type IssueWithLabels,
+  hasActiveFilters,
 } from './use-issues'
 export type { IssueListFilters } from './use-issues'
 export { useLabels, useCreateLabel } from './use-labels'

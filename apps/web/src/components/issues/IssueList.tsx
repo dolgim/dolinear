@@ -1,8 +1,12 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import type { Issue, WorkflowState } from '@dolinear/shared'
-import type { IssueListFilters } from '@/hooks/use-issues'
-import { useIssues, useUpdateIssue } from '@/hooks/use-issues'
+import {
+  useIssues,
+  useUpdateIssue,
+  hasActiveFilters,
+  type IssueListFilters,
+} from '@/hooks/use-issues'
 import { useWorkflowStates } from '@/hooks/use-workflow-states'
 import { useTeamMembers } from '@/hooks/use-team-members'
 import { useLabels } from '@/hooks/use-labels'
@@ -198,14 +202,5 @@ export function IssueList({
         </div>
       )}
     </div>
-  )
-}
-
-function hasActiveFilters(filters: IssueListFilters): boolean {
-  return !!(
-    filters.workflowStateId ||
-    filters.priority !== undefined ||
-    filters.assigneeId ||
-    filters.labelId
   )
 }

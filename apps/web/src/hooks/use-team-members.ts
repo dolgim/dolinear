@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { ApiResponse } from '@dolinear/shared'
 import { apiClient } from '@/lib/api-client'
+import { queryKeys } from '@/lib/query-keys'
 
 export interface TeamMemberWithUser {
   id: string
@@ -18,7 +19,7 @@ export interface TeamMemberWithUser {
 
 export function useTeamMembers(workspaceId: string, teamId: string) {
   return useQuery({
-    queryKey: ['teamMembers', teamId],
+    queryKey: queryKeys.teamMembers.list(teamId),
     queryFn: () =>
       apiClient
         .get<
