@@ -33,7 +33,7 @@ export function useIssueByIdentifier(
   identifier: string,
 ) {
   return useQuery({
-    queryKey: queryKeys.issues.detail(identifier),
+    queryKey: queryKeys.issues.detailByIdentifier(identifier),
     queryFn: () =>
       apiClient
         .get<
