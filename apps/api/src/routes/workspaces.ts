@@ -9,6 +9,7 @@ import { handleError, NotFoundError, ValidationError } from '../lib/errors.ts'
 import { generateSlug, generateUniqueSlug } from '../lib/slug.ts'
 import { requireWorkspaceMember } from '../middleware/workspace.ts'
 import { labelsRoute } from './labels.ts'
+import { teamsRoute } from './teams.ts'
 import type { Env, WorkspaceEnv } from '../types.ts'
 
 const createWorkspaceSchema = z.object({
@@ -220,6 +221,7 @@ wsRoute.get('/members', requireWorkspaceMember(), async (c) => {
 })
 
 wsRoute.route('/labels', labelsRoute)
+wsRoute.route('/teams', teamsRoute)
 
 workspacesRoute.route('/:workspaceId', wsRoute)
 
