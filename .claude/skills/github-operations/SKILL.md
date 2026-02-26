@@ -93,16 +93,16 @@ gh api graphql -f query='query {
 }'
 ```
 
-**특정 이슈만 조회** — `filterBy`에 번호 필터가 없으므로 alias 패턴을 사용:
+**특정 이슈만 조회** — alias 패턴으로 단일 쿼리에서 여러 이슈를 조회한다. for 루프로 `gh api graphql`을 반복 호출하지 않는다:
 
 ```bash
 gh api graphql -f query='query {
   repository(owner: "OWNER", name: "REPO") {
-    i1: issue(number: 1) { number title blockedBy(first:10) { nodes { number title state } } }
-    i2: issue(number: 2) { number title blockedBy(first:10) { nodes { number title state } } }
-    i3: issue(number: 3) { number title blockedBy(first:10) { nodes { number title state } } }
+    i1: issue(number: 1) { number title blockedBy(first:10) { nodes { number state } } blocking(first:10) { nodes { number state } } }
+    i2: issue(number: 2) { number title blockedBy(first:10) { nodes { number state } } blocking(first:10) { nodes { number state } } }
+    i3: issue(number: 3) { number title blockedBy(first:10) { nodes { number state } } blocking(first:10) { nodes { number state } } }
   }
-}'
+}' --jq '.data.repository | to_entries[] | .value | "#\(.number) \(.title) | blockedBy: \([.blockedBy.nodes[] | "#\(.number)(\(.state))"]) | blocking: \([.blocking.nodes[] | "#\(.number)(\(.state))"])"'
 ```
 
 ### 의존관계 추가

@@ -106,8 +106,10 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - 작업 시작 시 프로젝트 Status를 **In Progress**로 변경한다
 - PR 생성 시 `Closes #N`으로 이슈를 참조한다
 - PR 머지 후 프로젝트 Status가 **Done**으로 변경된다 (`Closes #N`으로 이슈 자동 닫힘)
-- 이슈 간 의존관계(blocked-by)가 설정되어 있으므로 순서를 지킨다
-- 이슈 간 의존관계 조회 시 반드시 `blockedBy`/`blocking` GraphQL 필드를 사용한다. `trackedInIssues`/`trackedIssues`는 레거시 Tasklist 기능이며 의존관계와 무관하다 (`/github-operations` skill 참조)
+- 이슈 간 의존관계가 설정되어 있으므로 순서를 지킨다
+  - 해당 사항은 `/github-operations` skill을 참조한다.
+  - 이슈 간 의존관계 조회 시 반드시 `blockedBy`/`blocking` GraphQL 필드를 사용한다. `trackedInIssues`/`trackedIssues`는 레거시 Tasklist 기능이며 의존관계와 무관하다
+  - 여러 이슈의 의존관계를 조회할 때 for 루프로 `gh api graphql`을 반복 호출하지 않는다. GraphQL alias 패턴으로 단일 쿼리를 사용한다
 
 ## 작업 규칙
 
