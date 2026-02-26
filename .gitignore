@@ -13,7 +13,6 @@ dist/
 .env.*.local
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -24,6 +23,9 @@ Thumbs.db
 
 # TanStack Router
 .tanstack/
+
+# Claude Code
+.claude/worktrees/
 
 # Logs
 *.log
