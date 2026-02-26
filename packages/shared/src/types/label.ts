@@ -1,8 +1,9 @@
 export interface Label {
   id: string
+  workspaceId: string
   name: string
   color: string
-  teamId: string
+  description: string | null
   createdAt: Date
   updatedAt: Date
 }
