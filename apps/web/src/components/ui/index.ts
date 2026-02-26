@@ -30,6 +30,7 @@ export {
   PopoverContent,
 } from './Popover'
 export { Input, type InputProps } from './Input'
+export { Textarea, type TextareaProps } from './Textarea'
 export { Badge, type BadgeProps } from './Badge'
 export { Avatar, AvatarImage, AvatarFallback } from './Avatar'
 export { IconButton, type IconButtonProps } from './IconButton'

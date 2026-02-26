@@ -1,7 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { ApiResponse, Team } from '@dolinear/shared'
+import type { ApiResponse, Team, TeamMember, User } from '@dolinear/shared'
 import { apiClient } from '@/lib/api-client'
 import { queryKeys } from '@/lib/query-keys'
+
+export interface TeamMemberWithUser extends TeamMember {
+  user: Pick<User, 'id' | 'name' | 'email' | 'image'>
+}
 
 export function useTeams(workspaceId: string) {
   return useQuery({
@@ -35,5 +39,18 @@ export function useCreateTeam() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.teams.all })
     },
+  })
+}
+
+export function useTeamMembers(workspaceId: string, teamId: string) {
+  return useQuery({
+    queryKey: queryKeys.teamMembers.list(teamId),
+    queryFn: () =>
+      apiClient
+        .get<
+          ApiResponse<TeamMemberWithUser[]>
+        >(`/workspaces/${workspaceId}/teams/${teamId}/members`)
+        .then((r) => r.data),
+    enabled: !!workspaceId && !!teamId,
   })
 }
