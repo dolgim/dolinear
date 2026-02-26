@@ -1,9 +1,9 @@
 import { createMiddleware } from 'hono/factory'
 import { eq, and } from 'drizzle-orm'
-import { db } from '../db/index.js'
-import * as schema from '../db/schema/index.js'
-import { NotFoundError, ForbiddenError } from '../lib/errors.js'
-import type { WorkspaceEnv } from '../types.js'
+import { db } from '../db/index.ts'
+import * as schema from '../db/schema/index.ts'
+import { NotFoundError, ForbiddenError } from '../lib/errors.ts'
+import type { WorkspaceEnv } from '../types.ts'
 
 export function requireWorkspaceMember(allowedRoles?: string[]) {
   return createMiddleware<WorkspaceEnv>(async (c, next) => {

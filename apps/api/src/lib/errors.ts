@@ -2,13 +2,18 @@ import type { Context } from 'hono'
 import type { ApiError } from '@dolinear/shared'
 
 export class AppError extends Error {
+  statusCode: number
+  details?: Record<string, string[]>
+
   constructor(
-    public statusCode: number,
+    statusCode: number,
     message: string,
-    public details?: Record<string, string[]>,
+    details?: Record<string, string[]>,
   ) {
     super(message)
     this.name = 'AppError'
+    this.statusCode = statusCode
+    this.details = details
   }
 
   toResponse(): ApiError {

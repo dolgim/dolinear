@@ -1,6 +1,6 @@
 import { createMiddleware } from 'hono/factory'
-import { auth } from '../auth.js'
-import type { Env } from '../types.js'
+import { auth } from '../auth.ts'
+import type { Env } from '../types.ts'
 
 const PUBLIC_PATHS = ['/health']
 

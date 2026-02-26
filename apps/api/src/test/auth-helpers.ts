@@ -1,5 +1,5 @@
 import type { Hono } from 'hono'
-import type { Env } from '../types.js'
+import type { Env } from '../types.ts'
 
 export async function createAuthenticatedUser(
   app: Hono<Env>,

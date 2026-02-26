@@ -1,6 +1,6 @@
 import type { Context } from 'hono'
 import { z } from 'zod'
-import { ValidationError } from './errors.js'
+import { ValidationError } from './errors.ts'
 
 export function parseBody<T extends z.ZodType>(
   schema: T,

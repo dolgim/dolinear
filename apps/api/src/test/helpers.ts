@@ -6,10 +6,10 @@ import { cors } from 'hono/cors'
 import { createMiddleware } from 'hono/factory'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import * as schema from '../db/schema/index.js'
-import { workspacesRoute } from '../routes/workspaces.js'
+import * as schema from '../db/schema/index.ts'
+import { workspacesRoute } from '../routes/workspaces.ts'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import type { Env } from '../types.js'
+import type { Env } from '../types.ts'
 
 export function createTestDb() {
   const connectionString = process.env.DATABASE_URL!

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateSlug, generateUniqueSlug } from '../lib/slug.js'
+import { generateSlug, generateUniqueSlug } from '../lib/slug.ts'
 
 describe('generateSlug', () => {
   it('should convert name to lowercase kebab-case', () => {

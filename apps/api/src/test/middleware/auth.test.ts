@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest'
 import { Hono } from 'hono'
 import { sql } from 'drizzle-orm'
-import { auth } from '../../auth.js'
-import { authMiddleware } from '../../middleware/auth.js'
-import { createAuthenticatedUser } from '../auth-helpers.js'
-import { createTestDb } from '../helpers.js'
-import type { Env } from '../../types.js'
+import { auth } from '../../auth.ts'
+import { authMiddleware } from '../../middleware/auth.ts'
+import { createAuthenticatedUser } from '../auth-helpers.ts'
+import { createTestDb } from '../helpers.ts'
+import type { Env } from '../../types.ts'
 
 describe('Auth Middleware', () => {
   const { db, client } = createTestDb()

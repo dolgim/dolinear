@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "node --watch src/index.ts",
     "build": "tsc",
     "db:push": "node --import tsx node_modules/drizzle-kit/bin.cjs push",
     "db:generate": "node --import tsx node_modules/drizzle-kit/bin.cjs generate",
