@@ -178,7 +178,8 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 ### 병렬 실행 & 웨이브 운영
 
 - **웨이브** = 블로커가 모두 완료된 이슈 그룹 (의존관계 DAG의 같은 레벨)
-- 작업 시작 전 GraphQL `blockedBy`/`blocking` 필드를 조회하여 의존관계 DAG를 파악하고 웨이브를 구성한다 (`/github-operations` skill 참조)
+- 웨이브 진행 시 반드시 `/github-operations` skill의 **"웨이브 진행 표준 절차"**를 따른다
+- 이슈 쿼리는 skill에 정의된 **웨이브 조회 스크립트**를 그대로 사용한다 (인라인 쿼리/필터링 직접 구성 금지)
 - 웨이브 내 이슈들은 Agent team을 사용하여 **병렬로 진행**한다
 - 병렬 진행 시 각 이슈는 별도 worktree에서 작업한다
 
