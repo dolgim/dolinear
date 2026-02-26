@@ -2,11 +2,11 @@ import 'dotenv/config'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serve } from '@hono/node-server'
-import { auth } from './auth.js'
-import { client } from './db/index.js'
-import { authMiddleware } from './middleware/auth.js'
-import { healthRoute, workspacesRoute } from './routes/index.js'
-import type { Env } from './types.js'
+import { auth } from './auth.ts'
+import { client } from './db/index.ts'
+import { authMiddleware } from './middleware/auth.ts'
+import { healthRoute, workspacesRoute } from './routes/index.ts'
+import type { Env } from './types.ts'
 
 const app = new Hono<Env>()
 

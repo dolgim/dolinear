@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { z } from 'zod'
-import { parseBody, parseQuery } from '../lib/validation.js'
-import { ValidationError } from '../lib/errors.js'
+import { parseBody, parseQuery } from '../lib/validation.ts'
+import { ValidationError } from '../lib/errors.ts'
 
 describe('parseBody', () => {
   const schema = z.object({

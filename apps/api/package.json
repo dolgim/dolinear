@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "node --watch src/index.ts",
     "build": "tsc",
-    "db:push": "node --import tsx node_modules/drizzle-kit/bin.cjs push",
-    "db:generate": "node --import tsx node_modules/drizzle-kit/bin.cjs generate",
+    "db:push": "node node_modules/drizzle-kit/bin.cjs push",
+    "db:generate": "node node_modules/drizzle-kit/bin.cjs generate",
     "db:studio": "drizzle-kit studio",
     "test": "vitest run"
   },
@@ -26,7 +26,6 @@
     "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.9",
     "testcontainers": "11.12.0",
-    "tsx": "^4",
     "typescript": "^5",
     "vitest": "4.0.18"
   }

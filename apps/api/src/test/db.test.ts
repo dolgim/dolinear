@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
-import { createTestDb, cleanupDatabase } from './helpers.js'
-import { user } from '../db/schema/index.js'
+import { createTestDb, cleanupDatabase } from './helpers.ts'
+import { user } from '../db/schema/index.ts'
 import { randomUUID } from 'node:crypto'
 
 describe('Database', () => {

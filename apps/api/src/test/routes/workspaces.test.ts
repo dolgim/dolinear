@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { auth } from '../../auth.js'
-import { authMiddleware } from '../../middleware/auth.js'
-import { workspacesRoute } from '../../routes/workspaces.js'
-import { createTestDb, cleanupDatabase } from '../helpers.js'
-import { createAuthenticatedUser } from '../auth-helpers.js'
-import type { Env } from '../../types.js'
+import { auth } from '../../auth.ts'
+import { authMiddleware } from '../../middleware/auth.ts'
+import { workspacesRoute } from '../../routes/workspaces.ts'
+import { createTestDb, cleanupDatabase } from '../helpers.ts'
+import { createAuthenticatedUser } from '../auth-helpers.ts'
+import type { Env } from '../../types.ts'
 
 describe('Workspace Routes', () => {
   const { db, client } = createTestDb()

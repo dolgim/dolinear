@@ -1,5 +1,5 @@
 import { pgTable, text, timestamp, unique } from 'drizzle-orm/pg-core'
-import { user } from './auth.js'
+import { user } from './auth.ts'
 
 export const workspace = pgTable('workspace', {
   id: text('id').primaryKey(),

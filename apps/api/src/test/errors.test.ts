@@ -5,7 +5,7 @@ import {
   ValidationError,
   UnauthorizedError,
   ForbiddenError,
-} from '../lib/errors.js'
+} from '../lib/errors.ts'
 
 describe('AppError', () => {
   it('should create an error with status code and message', () => {

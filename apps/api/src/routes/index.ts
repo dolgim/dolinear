@@ -1,2 +1,2 @@
-export { healthRoute } from './health.js'
-export { workspacesRoute } from './workspaces.js'
+export { healthRoute } from './health.ts'
+export { workspacesRoute } from './workspaces.ts'
