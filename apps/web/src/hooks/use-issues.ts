@@ -48,15 +48,27 @@ export function useCreateIssue() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: {
-      title: string
-      description?: string
+    mutationFn: ({
+      workspaceId,
+      teamId,
+      ...data
+    }: {
+      workspaceId: string
       teamId: string
+      title: string
+      description?: string | null
+      workflowStateId?: string
       priority?: IssuePriority
-      assigneeId?: string
-      parentId?: string
+      assigneeId?: string | null
+      dueDate?: string | null
+      estimate?: number | null
+      labelIds?: string[]
     }) =>
-      apiClient.post<ApiResponse<Issue>>('/issues', data).then((r) => r.data),
+      apiClient
+        .post<
+          ApiResponse<Issue>
+        >(`/workspaces/${workspaceId}/teams/${teamId}/issues`, data)
+        .then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.issues.all })
     },
@@ -83,6 +95,7 @@ export function useUpdateIssue() {
       assigneeId?: string | null
       dueDate?: string | null
       estimate?: number | null
+      sortOrder?: number
     }) =>
       apiClient
         .patch<

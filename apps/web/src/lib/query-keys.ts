@@ -30,4 +30,8 @@ export const queryKeys = {
     all: ['workflowStates'] as const,
     list: (teamId: string) => ['workflowStates', 'list', teamId] as const,
   },
+  teamMembers: {
+    all: ['teamMembers'] as const,
+    list: (teamId: string) => ['teamMembers', 'list', teamId] as const,
+  },
 }

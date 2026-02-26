@@ -3,7 +3,8 @@ export {
   useWorkspace,
   useCreateWorkspace,
 } from './use-workspaces'
-export { useTeams, useTeam, useCreateTeam } from './use-teams'
+export { useTeams, useTeam, useCreateTeam, useTeamMembers } from './use-teams'
+export type { TeamMemberWithUser } from './use-teams'
 export {
   useIssues,
   useIssue,
