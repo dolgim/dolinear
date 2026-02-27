@@ -131,6 +131,7 @@ export async function createAuthenticatedRequest(
 }
 
 export async function cleanupDatabase(db: PostgresJsDatabase<typeof schema>) {
+  await db.execute(sql`TRUNCATE TABLE "comment" CASCADE`)
   await db.execute(sql`TRUNCATE TABLE "issue_label" CASCADE`)
   await db.execute(sql`TRUNCATE TABLE "issue" CASCADE`)
   await db.execute(sql`TRUNCATE TABLE "workflow_state" CASCADE`)
