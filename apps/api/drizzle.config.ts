@@ -10,6 +10,7 @@ export default defineConfig({
     './src/db/schema/team.ts',
     './src/db/schema/workflow-state.ts',
     './src/db/schema/issue.ts',
+    './src/db/schema/comment.ts',
   ],
   dialect: 'postgresql',
   dbCredentials: {
