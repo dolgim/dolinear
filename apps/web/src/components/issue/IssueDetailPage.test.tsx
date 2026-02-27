@@ -105,6 +105,28 @@ vi.mock('@/hooks', () => ({
   useWorkflowStates: () => ({
     data: mockWorkflowStates,
   }),
+  useComments: () => ({
+    data: [],
+    isLoading: false,
+  }),
+  useCreateComment: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+  }),
+  useUpdateComment: () => ({
+    mutate: vi.fn(),
+  }),
+  useDeleteComment: () => ({
+    mutate: vi.fn(),
+  }),
+}))
+
+vi.mock('@/lib/auth', () => ({
+  authClient: {
+    useSession: () => ({
+      data: { user: { id: 'user-1', name: 'Test User' } },
+    }),
+  },
 }))
 
 const workspace: Workspace = {
@@ -215,7 +237,7 @@ describe('IssueDetailPage', () => {
     expect(screen.getByText('In Progress')).toBeInTheDocument()
   })
 
-  it('renders comment placeholder', () => {
+  it('renders comment section', () => {
     render(
       <IssueDetailPage
         workspace={workspace}
@@ -225,9 +247,7 @@ describe('IssueDetailPage', () => {
     )
 
     expect(screen.getByText('Comments')).toBeInTheDocument()
-    expect(
-      screen.getByText('Comments will be available soon.'),
-    ).toBeInTheDocument()
+    expect(screen.getByTestId('comment-section')).toBeInTheDocument()
   })
 
   it('allows inline title editing', async () => {

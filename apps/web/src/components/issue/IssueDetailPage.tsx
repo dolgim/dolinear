@@ -14,6 +14,7 @@ import {
   useWorkflowStates,
   type IssueWithLabels,
 } from '@/hooks'
+import { CommentSection } from './CommentSection'
 import {
   Badge,
   Select,
@@ -127,7 +128,11 @@ function MainContent({
     <div className="flex-1 overflow-y-auto pr-6 min-w-0">
       <InlineTitle issue={issue} workspace={workspace} team={team} />
       <DescriptionSection issue={issue} workspace={workspace} team={team} />
-      <CommentPlaceholder />
+      <CommentSection
+        workspaceId={workspace.id}
+        teamId={team.id}
+        issueId={issue.id}
+      />
     </div>
   )
 }
@@ -285,17 +290,6 @@ function DescriptionSection({
       ) : (
         <p className="text-gray-500 text-sm italic">Add a description...</p>
       )}
-    </div>
-  )
-}
-
-function CommentPlaceholder() {
-  return (
-    <div className="mt-8 pt-6 border-t border-white/10">
-      <h3 className="text-sm font-medium text-gray-400 mb-3">Comments</h3>
-      <p className="text-sm text-gray-500 italic">
-        Comments will be available soon.
-      </p>
     </div>
   )
 }
