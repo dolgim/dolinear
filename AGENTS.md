@@ -210,11 +210,15 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 
 #### 워크트리 격리 규칙
 
-병렬 에이전트는 각자 별도 워크트리에서 작업한다. **워크트리 생명주기는 리더가 전담**하며, 구현 에이전트는 워크트리를 생성/삭제하지 않는다. 다음 규칙을 반드시 준수한다:
+병렬 에이전트는 각자 별도 워크트리에서 작업한다. **워크트리 생명주기는 리더가 전담**하며, 구현 에이전트는 워크트리를 생성/삭제하지 않는다.
+
+> **에이전트 팀 워크트리**는 프로젝트 외부(`~/.claude/worktrees/dolinear/`)에 생성한다. 프로젝트 내부(`.claude/worktrees/`)에 워크트리를 생성하면 CLAUDE.md/AGENTS.md가 중복 로딩되어 컨텍스트 토큰이 낭비된다. 단, `--worktree` 플래그로 생성되는 세션 워크트리는 Claude Code가 `.claude/worktrees/`에 고정 생성하므로 변경 불가 (알려진 제한).
+
+다음 규칙을 반드시 준수한다:
 
 **리더 (메인 에이전트):**
 
-- **워크트리 생성**: 에이전트 스폰 **전에** `git worktree add .claude/worktrees/<agent-name> -b <branch> main` 실행
+- **워크트리 생성**: 에이전트 스폰 **전에** `git worktree add ~/.claude/worktrees/dolinear/<agent-name> -b <branch> main` 실행
 - **에이전트 스폰**: 프롬프트에 워크트리 절대 경로를 전달하고, 에이전트가 `cd`로 이동하도록 지시한다
 - **PR 머지 순서**: 팀원 종료 → `git worktree remove <path>` → `gh pr merge <PR> --squash --delete-branch`
   - `gh pr merge --delete-branch`는 워크트리가 브랜치를 점유하면 실패한다 (GitHub CLI #3442). 반드시 워크트리를 먼저 제거한다
@@ -223,7 +227,7 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 **구현 에이전트:**
 
 - 프롬프트에 지정된 워크트리 경로로 `cd`
-- `pwd`로 `.claude/worktrees/` 하위인지 확인 (아니면 즉시 작업 중단 + 리더에게 보고)
+- `pwd`로 `~/.claude/worktrees/dolinear/` 하위인지 확인 (아니면 즉시 작업 중단 + 리더에게 보고)
 - 셋업 순서: `cd <path>` → `pnpm install` → `pnpm db:setup` → `pnpm --filter api db:push`
 - `git worktree add`, `git worktree remove`, `git checkout -b` 사용 금지
 - 메인 레포 디렉토리로 `cd`하지 않는다
