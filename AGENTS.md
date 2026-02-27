@@ -107,6 +107,10 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 
 **Issue operation rules**:
 
+- When creating a new issue, always add it to the DOLinear project (Status: Todo):
+  ```bash
+  gh issue create --title "..." --body "..." | xargs -I {} gh project item-add 4 --owner dolgim --url {}
+  ```
 - Check the issue and follow its checklist when starting work
 - Change project Status to **In Progress** when starting work
 - Reference issue via `Closes #N` when creating a PR
