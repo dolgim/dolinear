@@ -24,3 +24,8 @@ export {
 export { useWorkflowStates } from './use-workflow-states'
 export { useTeamMembers } from './use-team-members'
 export type { TeamMemberWithUser } from './use-team-members'
+export { useWorkspaceIssues } from './use-workspace-issues'
+export type {
+  WorkspaceIssueWithDetails,
+  WorkspaceIssueListFilters,
+} from './use-workspace-issues'

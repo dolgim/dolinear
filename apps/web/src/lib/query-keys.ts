@@ -18,6 +18,11 @@ export const queryKeys = {
     list: (filters?: Record<string, unknown>) =>
       ['issues', 'list', filters] as const,
   },
+  workspaceIssues: {
+    all: ['workspaceIssues'] as const,
+    list: (filters?: Record<string, unknown>) =>
+      ['workspaceIssues', 'list', filters] as const,
+  },
   labels: {
     all: ['labels'] as const,
     list: (workspaceId: string) => ['labels', 'list', workspaceId] as const,

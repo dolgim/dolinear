@@ -10,6 +10,7 @@ import { generateSlug, generateUniqueSlug } from '../lib/slug.ts'
 import { requireWorkspaceMember } from '../middleware/workspace.ts'
 import { labelsRoute } from './labels.ts'
 import { teamsRoute } from './teams.ts'
+import { workspaceIssuesRoute } from './workspace-issues.ts'
 import type { Env, WorkspaceEnv } from '../types.ts'
 
 const createWorkspaceSchema = z.object({
@@ -222,6 +223,7 @@ wsRoute.get('/members', requireWorkspaceMember(), async (c) => {
 
 wsRoute.route('/labels', labelsRoute)
 wsRoute.route('/teams', teamsRoute)
+wsRoute.route('/issues', workspaceIssuesRoute)
 
 workspacesRoute.route('/:workspaceId', wsRoute)
 
