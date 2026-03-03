@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui'
+import { CreateTeamDialog } from '@/components/team/CreateTeamDialog'
 import type { Workspace, Team } from '@dolinear/shared'
 
 interface SidebarProps {
@@ -27,6 +28,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { data: workspaces } = useWorkspaces()
   const currentWorkspace = workspaces?.find((ws) => ws.slug === currentSlug)
   const { data: teams } = useTeams(currentWorkspace?.id ?? '')
+  const [createTeamOpen, setCreateTeamOpen] = useState(false)
 
   const handleLogout = async () => {
     await authClient.signOut()
@@ -85,6 +87,27 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 activeTeamIdentifier={params.teamIdentifier}
               />
             ))}
+            <li>
+              <button
+                data-testid="sidebar-create-team"
+                onClick={() => setCreateTeamOpen(true)}
+                className="flex w-full items-center rounded px-3 py-1.5 text-sm text-gray-500 hover:bg-white/5 hover:text-gray-300"
+              >
+                <span className="mr-1.5 text-xs">+</span>
+                Create team
+              </button>
+            </li>
+            <li>
+              <Link
+                to="/workspace/$workspaceSlug/settings/teams"
+                params={{ workspaceSlug: currentSlug }}
+                data-testid="sidebar-teams-settings"
+                className="flex items-center rounded px-3 py-1.5 text-sm text-gray-500 hover:bg-white/5 hover:text-gray-300"
+                activeProps={{ className: 'bg-white/10 text-white' }}
+              >
+                Teams settings
+              </Link>
+            </li>
           </ul>
         )}
         {!collapsed && !currentSlug && (
@@ -109,6 +132,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           {collapsed ? '⏻' : 'Log out'}
         </button>
       </div>
+
+      {currentWorkspace && (
+        <CreateTeamDialog
+          open={createTeamOpen}
+          onOpenChange={setCreateTeamOpen}
+          workspaceId={currentWorkspace.id}
+        />
+      )}
     </aside>
   )
 }
