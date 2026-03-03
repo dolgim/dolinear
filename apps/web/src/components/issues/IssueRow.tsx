@@ -1,3 +1,5 @@
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import type { Issue, WorkflowState, Label } from '@dolinear/shared'
 import type { TeamMemberWithUser } from '@/hooks/use-team-members'
 import { cn } from '@/lib/utils'
@@ -27,22 +29,63 @@ export function IssueRow({
   onStateChange,
   onClick,
 }: IssueRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: issue.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   const formattedDueDate = issue.dueDate ? formatDueDate(issue.dueDate) : null
 
   return (
     <div
+      ref={setNodeRef}
+      style={style}
       role="row"
       tabIndex={0}
       data-testid={`issue-row-${issue.identifier}`}
       className={cn(
-        'flex items-center gap-3 px-4 py-2 border-b border-white/5 cursor-pointer transition-colors hover:bg-white/5',
+        'group/row flex items-center gap-3 px-4 py-2 border-b border-white/5 cursor-pointer transition-colors hover:bg-white/5',
         isSelected && 'bg-white/10',
+        isDragging && 'opacity-50 bg-white/5 z-10',
       )}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter') onClick()
       }}
     >
+      {/* Drag handle */}
+      <button
+        className="shrink-0 cursor-grab touch-none text-gray-600 hover:text-gray-400 opacity-0 group-hover/row:opacity-100 focus:opacity-100"
+        data-testid={`drag-handle-${issue.identifier}`}
+        {...attributes}
+        {...listeners}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <circle cx="5.5" cy="3.5" r="1.5" />
+          <circle cx="10.5" cy="3.5" r="1.5" />
+          <circle cx="5.5" cy="8" r="1.5" />
+          <circle cx="10.5" cy="8" r="1.5" />
+          <circle cx="5.5" cy="12.5" r="1.5" />
+          <circle cx="10.5" cy="12.5" r="1.5" />
+        </svg>
+      </button>
+
       {/* Priority icon */}
       <PriorityIcon priority={issue.priority} />
 

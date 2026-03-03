@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import type { Issue, WorkflowState, Label } from '@dolinear/shared'
 import type { TeamMemberWithUser } from '@/hooks/use-team-members'
 import { WorkflowStateIcon } from './WorkflowStateIcon'
@@ -32,6 +33,7 @@ export function IssueGroup({
   const [expanded, setExpanded] = useState(defaultExpanded)
 
   const membersByUserId = new Map(members.map((m) => [m.userId, m.user]))
+  const issueIds = useMemo(() => issues.map((i) => i.id), [issues])
 
   return (
     <div data-testid={`issue-group-${state.id}`}>
@@ -49,31 +51,36 @@ export function IssueGroup({
         <span className="text-xs text-gray-500">{issues.length}</span>
       </button>
       {expanded && (
-        <div role="rowgroup">
-          {issues.map((issue) => {
-            const issueLabels = (issueLabelIds.get(issue.id) ?? [])
-              .map((lid) => labelsMap.get(lid))
-              .filter((l): l is Label => !!l)
+        <SortableContext
+          items={issueIds}
+          strategy={verticalListSortingStrategy}
+        >
+          <div role="rowgroup">
+            {issues.map((issue) => {
+              const issueLabels = (issueLabelIds.get(issue.id) ?? [])
+                .map((lid) => labelsMap.get(lid))
+                .filter((l): l is Label => !!l)
 
-            return (
-              <IssueRow
-                key={issue.id}
-                issue={issue}
-                workflowState={state}
-                allStates={allStates}
-                assignee={
-                  issue.assigneeId
-                    ? membersByUserId.get(issue.assigneeId)
-                    : undefined
-                }
-                labels={issueLabels}
-                isSelected={selectedIssueId === issue.id}
-                onStateChange={onStateChange}
-                onClick={() => onIssueClick(issue)}
-              />
-            )
-          })}
-        </div>
+              return (
+                <IssueRow
+                  key={issue.id}
+                  issue={issue}
+                  workflowState={state}
+                  allStates={allStates}
+                  assignee={
+                    issue.assigneeId
+                      ? membersByUserId.get(issue.assigneeId)
+                      : undefined
+                  }
+                  labels={issueLabels}
+                  isSelected={selectedIssueId === issue.id}
+                  onStateChange={onStateChange}
+                  onClick={() => onIssueClick(issue)}
+                />
+              )
+            })}
+          </div>
+        </SortableContext>
       )}
     </div>
   )
