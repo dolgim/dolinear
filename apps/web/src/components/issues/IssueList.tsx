@@ -95,7 +95,7 @@ export function IssueList({
   const handleIssueClick = useCallback(
     (issue: Issue) => {
       navigate({
-        to: '/workspace/$workspaceSlug/team/$teamIdentifier/issues/$issueIdentifier',
+        to: '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier',
         params: {
           workspaceSlug,
           teamIdentifier,
