@@ -1,10 +1,10 @@
-> 이 문서는 토큰 절약을 위해 영어로 작성되어 있습니다.
-> This document MUST be written and maintained in English.
-
 ---
 name: github-operations
 description: GitHub GraphQL API patterns — reference for features not natively supported by gh CLI, such as sub-issues, blocked-by, and node ID lookups
 ---
+
+> 이 문서는 토큰 절약을 위해 영어로 작성되어 있습니다.
+> This document MUST be written and maintained in English.
 
 # GitHub Operations Reference
 
