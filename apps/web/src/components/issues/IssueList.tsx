@@ -1,6 +1,15 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import type { Issue, WorkflowState } from '@dolinear/shared'
+import { useQueryClient } from '@tanstack/react-query'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import type { Issue, WorkflowState, PaginatedResponse } from '@dolinear/shared'
 import {
   useIssues,
   useUpdateIssue,
@@ -10,6 +19,7 @@ import {
 import { useWorkflowStates } from '@/hooks/use-workflow-states'
 import { useTeamMembers } from '@/hooks/use-team-members'
 import { useLabels } from '@/hooks/use-labels'
+import { queryKeys } from '@/lib/query-keys'
 import { FilterBar } from './FilterBar'
 import { IssueGroup } from './IssueGroup'
 import { IssueListSkeleton } from './IssueListSkeleton'
@@ -29,6 +39,7 @@ export function IssueList({
   teamIdentifier,
 }: IssueListProps) {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const containerRef = useRef<HTMLDivElement>(null)
   const [filters, setFilters] = useState<IssueListFilters>({
     pageSize: 100,
@@ -48,6 +59,13 @@ export function IssueList({
   const { data: labels } = useLabels(workspaceId)
   const updateIssue = useUpdateIssue()
 
+  // DnD sensors with activation constraint to avoid interfering with clicks
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+  )
+
   const issues = issuesData?.data ?? []
   const isLoading = issuesLoading || statesLoading
 
@@ -65,7 +83,9 @@ export function IssueList({
     const sortedStates = [...states].sort((a, b) => a.position - b.position)
 
     for (const state of sortedStates) {
-      const stateIssues = issues.filter((i) => i.workflowStateId === state.id)
+      const stateIssues = issues
+        .filter((i) => i.workflowStateId === state.id)
+        .sort((a, b) => a.sortOrder - b.sortOrder)
       if (stateIssues.length > 0 || !hasActiveFilters(filters)) {
         groups.push({ state, issues: stateIssues })
       }
@@ -104,6 +124,89 @@ export function IssueList({
       })
     },
     [navigate, workspaceSlug, teamIdentifier],
+  )
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
+      if (!over || active.id === over.id) return
+
+      // Find which group the dragged issue belongs to
+      const activeIssue = issues.find((i) => i.id === active.id)
+      if (!activeIssue) return
+
+      const group = groupedIssues.find(
+        (g) => g.state.id === activeIssue.workflowStateId,
+      )
+      if (!group) return
+
+      const groupIssues = group.issues
+      const oldIndex = groupIssues.findIndex((i) => i.id === active.id)
+      const newIndex = groupIssues.findIndex((i) => i.id === over.id)
+      if (oldIndex === -1 || newIndex === -1) return
+
+      // Calculate new sortOrder based on neighbors
+      const reordered = [...groupIssues]
+      const [moved] = reordered.splice(oldIndex, 1)
+      reordered.splice(newIndex, 0, moved)
+
+      let newSortOrder: number
+      if (newIndex === 0) {
+        // Moved to first position
+        newSortOrder = (reordered[1]?.sortOrder ?? 0) - 1
+      } else if (newIndex === reordered.length - 1) {
+        // Moved to last position
+        newSortOrder = (reordered[newIndex - 1]?.sortOrder ?? 0) + 1
+      } else {
+        // Between two items: midpoint
+        const prev = reordered[newIndex - 1]!.sortOrder
+        const next = reordered[newIndex + 1]!.sortOrder
+        newSortOrder = (prev + next) / 2
+      }
+
+      // Optimistic update: reorder in cache
+      const queryKey = queryKeys.issues.list({
+        workspaceId,
+        teamId,
+        ...filters,
+      })
+      queryClient.setQueryData<PaginatedResponse<Issue>>(queryKey, (old) => {
+        if (!old) return old
+        return {
+          ...old,
+          data: old.data.map((i) =>
+            i.id === active.id ? { ...i, sortOrder: newSortOrder } : i,
+          ),
+        }
+      })
+
+      // Persist to server
+      updateIssue.mutate(
+        {
+          workspaceId,
+          teamId,
+          identifier: activeIssue.identifier,
+          sortOrder: newSortOrder,
+        },
+        {
+          onError: () => {
+            // Rollback on error
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.issues.all,
+            })
+          },
+        },
+      )
+    },
+    [
+      issues,
+      groupedIssues,
+      workspaceId,
+      teamId,
+      filters,
+      queryClient,
+      updateIssue,
+    ],
   )
 
   // Keyboard navigation: j/k to move, Enter to open
@@ -176,30 +279,36 @@ export function IssueList({
           onClearFilters={() => setFilters({ pageSize: 100 })}
         />
       ) : (
-        <div role="table" aria-label="Issues">
-          {groupedIssues.map((group) => (
-            <IssueGroup
-              key={group.state.id}
-              state={group.state}
-              issues={group.issues}
-              allStates={states ?? []}
-              members={members ?? []}
-              labelsMap={labelsMap}
-              issueLabelIds={issueLabelIds}
-              selectedIssueId={
-                selectedIndex >= 0
-                  ? (flatIssues[selectedIndex]?.id ?? null)
-                  : null
-              }
-              onStateChange={handleStateChange}
-              onIssueClick={(issue) => {
-                const idx = flatIssues.findIndex((i) => i.id === issue.id)
-                setSelectedIndex(idx)
-                handleIssueClick(issue)
-              }}
-            />
-          ))}
-        </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <div role="table" aria-label="Issues">
+            {groupedIssues.map((group) => (
+              <IssueGroup
+                key={group.state.id}
+                state={group.state}
+                issues={group.issues}
+                allStates={states ?? []}
+                members={members ?? []}
+                labelsMap={labelsMap}
+                issueLabelIds={issueLabelIds}
+                selectedIssueId={
+                  selectedIndex >= 0
+                    ? (flatIssues[selectedIndex]?.id ?? null)
+                    : null
+                }
+                onStateChange={handleStateChange}
+                onIssueClick={(issue) => {
+                  const idx = flatIssues.findIndex((i) => i.id === issue.id)
+                  setSelectedIndex(idx)
+                  handleIssueClick(issue)
+                }}
+              />
+            ))}
+          </div>
+        </DndContext>
       )}
     </div>
   )
