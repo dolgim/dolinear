@@ -44,6 +44,6 @@ test.describe('Issue List', () => {
     await page.goto(`/workspace/${workspace.slug}/team/ENG/issues`)
 
     await page.getByTestId('issue-row-ENG-1').click()
-    await page.waitForURL(/\/issues\/ENG-1/)
+    await page.waitForURL(/\/issue\/ENG-1/)
   })
 })
