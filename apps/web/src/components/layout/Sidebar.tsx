@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui'
 import { CreateTeamDialog } from '@/components/team/CreateTeamDialog'
+import { CreateIssueDialog } from '@/components/issue/CreateIssueDialog'
 import type { Workspace, Team } from '@dolinear/shared'
 
 interface SidebarProps {
@@ -83,6 +84,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               <TeamSection
                 key={team.id}
                 team={team}
+                workspaceId={currentWorkspace!.id}
                 workspaceSlug={currentSlug}
                 activeTeamIdentifier={params.teamIdentifier}
               />
@@ -194,28 +196,44 @@ function WorkspaceSwitcher({
 
 function TeamSection({
   team,
+  workspaceId,
   workspaceSlug,
   activeTeamIdentifier,
 }: {
   team: Team
+  workspaceId: string
   workspaceSlug: string
   activeTeamIdentifier?: string
 }) {
   const isActive = team.identifier === activeTeamIdentifier
   const [expanded, setExpanded] = useState(isActive)
+  const [createIssueOpen, setCreateIssueOpen] = useState(false)
 
   return (
     <li>
-      <button
-        onClick={() => setExpanded((prev) => !prev)}
-        data-testid={`team-toggle-${team.identifier}`}
-        className="flex w-full items-center rounded px-3 py-1.5 text-sm text-gray-400 hover:bg-white/5 hover:text-gray-200"
-      >
-        <span className="mr-1.5 text-xs text-gray-500">
-          {expanded ? '▼' : '▶'}
-        </span>
-        <span className="truncate font-medium">{team.name}</span>
-      </button>
+      <div className="group flex w-full items-center">
+        <button
+          onClick={() => setExpanded((prev) => !prev)}
+          data-testid={`team-toggle-${team.identifier}`}
+          className="flex flex-1 items-center rounded px-3 py-1.5 text-sm text-gray-400 hover:bg-white/5 hover:text-gray-200"
+        >
+          <span className="mr-1.5 text-xs text-gray-500">
+            {expanded ? '▼' : '▶'}
+          </span>
+          <span className="truncate font-medium">{team.name}</span>
+        </button>
+        <button
+          data-testid={`sidebar-create-issue-${team.identifier}`}
+          onClick={(e) => {
+            e.stopPropagation()
+            setCreateIssueOpen(true)
+          }}
+          className="mr-1 rounded p-1 text-xs text-gray-500 opacity-0 hover:bg-white/10 hover:text-gray-300 group-hover:opacity-100"
+          aria-label={`Create issue for ${team.name}`}
+        >
+          +
+        </button>
+      </div>
       {expanded && (
         <ul
           className="ml-4 space-y-0.5"
@@ -253,6 +271,12 @@ function TeamSection({
           </li>
         </ul>
       )}
+      <CreateIssueDialog
+        open={createIssueOpen}
+        onOpenChange={setCreateIssueOpen}
+        workspaceId={workspaceId}
+        teamId={team.id}
+      />
     </li>
   )
 }
