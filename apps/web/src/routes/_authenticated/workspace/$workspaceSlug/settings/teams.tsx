@@ -119,6 +119,11 @@ function TeamRow({ team, workspaceId }: { team: Team; workspaceId: string }) {
           <span className="text-sm text-gray-200 truncate">{team.name}</span>
         )}
       </div>
+      {(updateTeam.error || deleteTeam.error) && (
+        <p className="text-sm text-red-400 mx-3">
+          {updateTeam.error?.message || deleteTeam.error?.message}
+        </p>
+      )}
       <div className="flex items-center gap-2 shrink-0 ml-4">
         {editing ? (
           <>
@@ -176,6 +181,7 @@ function TeamRow({ team, workspaceId }: { team: Team; workspaceId: string }) {
               Cancel
             </Button>
             <Button
+              variant="danger"
               data-testid={`team-delete-confirm-${team.identifier}`}
               onClick={handleDelete}
               disabled={deleteTeam.isPending}

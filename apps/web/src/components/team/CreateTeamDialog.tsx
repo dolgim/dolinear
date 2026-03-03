@@ -27,6 +27,14 @@ export function CreateTeamDialog({
   const [identifier, setIdentifier] = useState('')
   const createTeam = useCreateTeam()
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setName('')
+      setIdentifier('')
+    }
+    onOpenChange(nextOpen)
+  }
+
   const identifierError =
     identifier && !/^[A-Z]{2,5}$/.test(identifier)
       ? 'Must be 2-5 uppercase letters'
@@ -40,9 +48,7 @@ export function CreateTeamDialog({
       { name: name.trim(), identifier: identifier.trim(), workspaceId },
       {
         onSuccess: (team) => {
-          setName('')
-          setIdentifier('')
-          onOpenChange(false)
+          handleOpenChange(false)
           onSuccess?.(team)
         },
       },
@@ -50,7 +56,7 @@ export function CreateTeamDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogTitle>Create team</DialogTitle>
         <DialogDescription>
@@ -94,7 +100,7 @@ export function CreateTeamDialog({
             <Button
               type="button"
               variant="secondary"
-              onClick={() => onOpenChange(false)}
+              onClick={() => handleOpenChange(false)}
             >
               Cancel
             </Button>
