@@ -133,6 +133,35 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 5. **Package execution**: Use `pnpm exec` instead of `npx` (pnpm monorepo environment)
 6. **DB schema management**: Use Drizzle schema (`apps/api/src/db/schema.ts`) as the single source of truth. Do not create tables via raw SQL in test setups (use `drizzle-kit push`)
 
+### E2E Testing
+
+E2E tests are written with Playwright in the `e2e/` directory.
+
+#### Commands
+
+```bash
+pnpm --filter e2e test                    # Run all E2E tests (servers auto-start)
+pnpm --filter e2e test:ui                 # Playwright UI mode
+pnpm --filter e2e exec playwright test tests/auth/  # Run specific directory only
+pnpm --filter e2e exec playwright install --with-deps chromium  # Install browsers
+```
+
+#### Adding E2E Tests for New Features
+
+1. Follow existing test file patterns in `e2e/tests/`
+2. Set up test data via the `api` fixture (API calls), not direct DB inserts
+3. Add `data-testid` attributes to new UI components for stable selectors
+4. Import `test` from `e2e/fixtures/base.fixture.ts`
+5. For unauthenticated tests, use `test.use({ storageState: { cookies: [], origins: [] } })`
+6. Include E2E test results in the PR test plan
+
+#### Test Stability Rules
+
+- Use Playwright built-in auto-waiting (`waitForURL`, `expect().toBeVisible()`, etc.)
+- Hard-coded waits (`page.waitForTimeout()`) are forbidden
+- Selector priority: `data-testid` > `getByRole` > `getByLabel` > `getByText`
+- Each test must be independent (no dependency on other test results)
+
 ### DO
 
 - Implement one issue at a time; verify it works before moving to the next
@@ -141,6 +170,7 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - Include test results when creating a PR
 - Ensure no lint or TypeScript type errors upon completion
 - When requirements are unclear or ambiguous, **ask the user instead of guessing**
+- Write E2E tests for new UI features (`e2e/tests/` directory)
 
 ### DON'T
 
@@ -148,6 +178,30 @@ gh project item-edit --project-id PVT_kwHOAPxGec4BP540 --id <ITEM_ID> --field-id
 - Do not implement multiple issues at once
 - Do not proceed to the next step without verifying behavior
 - Do not instruct parallel agents to run `git checkout -b` in the main repo (use worktree isolation)
+
+### Common Pitfalls
+
+Lessons from past implementation mistakes. Review before starting work.
+
+#### pnpm Monorepo Conventions
+
+- **Always use pnpm**, never npm or npx. `packageManager` in root `package.json` is a project-wide mandate
+- New packages belong in `pnpm-workspace.yaml`. A separate lockfile is always wrong — one lockfile per monorepo
+- For root scripts that delegate to workspace packages, use `pnpm --filter <pkg> <script>` (e.g., `pnpm --filter api test`). Do not use `npx`, `cd && run`, or `pnpm exec` patterns
+- Before writing new scripts or commands, check existing patterns in root `package.json` and follow them
+
+#### Read Before You Write
+
+- **Verify API response structure** before writing helpers — check route handlers for response wrappers (e.g., `{ data: ... }`)
+- **Verify route parameters** — distinguish between UUID (`id`) and human-readable identifier (`identifier` like "ENG-1") by reading route definitions
+- **Verify routing structure** — when similar routes exist (e.g., `/issue/` vs `/issues/`), check the router config to find actual functionality
+- **Verify environment readiness** before running tests (DB running, schema pushed, servers available)
+
+#### E2E Auth & Session
+
+- `cleanDatabase()` in the auto fixture must **preserve auth tables** (`user`, `session`, `account`). Only truncate domain tables. Truncating auth tables invalidates the shared storageState
+- API calls from `ApiHelper` must go through the **Vite proxy** (same origin as the browser, `localhost:5173`), not directly to the API server (`localhost:3001`). Cookies are scoped to the origin domain
+- **Destructive auth actions** (logout, password change) must use their own disposable session (`test.use({ storageState: { cookies: [], origins: [] } })` + fresh signup), never the shared storageState
 
 ### Browser Testing
 
@@ -176,10 +230,10 @@ After testing is complete, report the list of discovered bugs (including created
 
 ### Role Definitions
 
-| Role                        | Responsibilities                                                                |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| **Leader** (main agent)     | Issue assignment, teammate creation/termination, PR merge, Status→Done change   |
-| **Implementation agent**    | Issue implementation, testing, PR creation, review subagent creation, review feedback handling |
+| Role                     | Responsibilities                                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| **Leader** (main agent)  | Issue assignment, teammate creation/termination, PR merge, Status→Done change                  |
+| **Implementation agent** | Issue implementation, testing, PR creation, review subagent creation, review feedback handling |
 
 ### Review Process
 
@@ -198,6 +252,7 @@ After testing is complete, report the list of discovered bugs (including created
 
 - When an issue's completion criteria include runtime verification (server startup, API calls, builds, etc.), **do not consider it complete based on code review alone**
 - Review subagents must **perform runtime verification in addition to code review** (server startup, curl tests, etc.)
+- UI feature changes in a PR must have corresponding E2E tests that pass (`pnpm --filter e2e test`) before review is considered complete
 - Do not give LGTM if the PR's test plan has unchecked items
 - Review is considered complete only when all test plan items are checked
 
