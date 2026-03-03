@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { authClient } from '../lib/auth'
+import { getAuthErrorMessage } from '../lib/auth-errors'
 
 export const Route = createFileRoute('/signup')({
   component: SignupPage,
@@ -28,7 +29,7 @@ function SignupPage() {
     setLoading(false)
 
     if (signUpError) {
-      setError(signUpError.message ?? 'Signup failed')
+      setError(getAuthErrorMessage(signUpError, 'Signup failed'))
       return
     }
 
@@ -44,7 +45,10 @@ function SignupPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 rounded bg-red-900/30 border border-red-800 text-red-300 text-sm">
+            <div
+              data-testid="auth-error"
+              className="p-3 rounded bg-red-900/30 border border-red-800 text-red-300 text-sm"
+            >
               {error}
             </div>
           )}

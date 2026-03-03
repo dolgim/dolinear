@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/base.fixture.js'
+import { TEST_USER } from '../../helpers/constants.js'
 
 // Signup tests don't use stored auth state
 test.use({ storageState: { cookies: [], origins: [] } })
@@ -18,7 +19,9 @@ test.describe('Signup', () => {
     ).toBeVisible()
   })
 
-  test('should show error for short password', async ({ page }) => {
+  test('should prevent submission for short password via browser validation', async ({
+    page,
+  }) => {
     await page.goto('/signup')
 
     await page.getByLabel('Name').fill('Short Pass')
@@ -26,8 +29,23 @@ test.describe('Signup', () => {
     await page.getByLabel('Password').fill('short')
     await page.getByRole('button', { name: 'Sign up' }).click()
 
-    // Should stay on signup page and show error
+    // Browser native validation prevents form submission (minLength=8)
+    // so the page stays on signup without navigating
     await expect(page).toHaveURL(/\/signup/)
+  })
+
+  test('should show error for duplicate email', async ({ page }) => {
+    await page.goto('/signup')
+
+    // TEST_USER is already registered by the setup project
+    await page.getByLabel('Name').fill('Duplicate User')
+    await page.getByLabel('Email').fill(TEST_USER.email)
+    await page.getByLabel('Password').fill('somepassword123')
+    await page.getByRole('button', { name: 'Sign up' }).click()
+
+    const errorAlert = page.getByTestId('auth-error')
+    await expect(errorAlert).toBeVisible()
+    await expect(errorAlert).toContainText('already registered')
   })
 
   test('should navigate to login page', async ({ page }) => {
