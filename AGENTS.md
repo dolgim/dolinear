@@ -164,6 +164,7 @@ pnpm --filter e2e exec playwright install --with-deps chromium  # Install browse
 
 ### DO
 
+- **When no issue exists for the task, create one before starting work** unless the task is trivial (typo fix, minor config tweak). An issue naturally triggers the proper workflow: issue → branch → worktree → PR (`Closes #N`). Skipping issue creation leads to skipping the rest of the process
 - Implement one issue at a time; verify it works before moving to the next
 - Fulfill the issue's checklist and completion criteria
 - Follow existing code patterns and conventions
