@@ -1,8 +1,20 @@
-import { useState, useEffect, useCallback } from 'react'
+import {
+  useState,
+  useEffect,
+  useCallback,
+  createContext,
+  useContext,
+} from 'react'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { useWorkspaces } from '@/hooks/use-workspaces'
 import { useTeams } from '@/hooks/use-teams'
 import { CreateIssueDialog } from '@/components/issue/CreateIssueDialog'
+
+const CreateIssueContext = createContext<(() => void) | null>(null)
+
+export function useCreateIssueContext() {
+  return useContext(CreateIssueContext)
+}
 
 export const Route = createFileRoute(
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier',
@@ -18,6 +30,8 @@ function TeamLayout() {
   const workspace = workspaces?.find((ws) => ws.slug === workspaceSlug)
   const { data: teams } = useTeams(workspace?.id ?? '')
   const team = teams?.find((t) => t.identifier === teamIdentifier)
+
+  const openCreateDialog = useCallback(() => setCreateDialogOpen(true), [])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     // Don't trigger if user is typing in an input/textarea
@@ -43,7 +57,7 @@ function TeamLayout() {
   }, [handleKeyDown])
 
   return (
-    <>
+    <CreateIssueContext.Provider value={openCreateDialog}>
       <Outlet />
       {workspace && team && (
         <CreateIssueDialog
@@ -53,6 +67,6 @@ function TeamLayout() {
           teamId={team.id}
         />
       )}
-    </>
+    </CreateIssueContext.Provider>
   )
 }
