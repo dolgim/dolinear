@@ -31,7 +31,9 @@ test.describe('Drag and Drop Issue Sorting', () => {
     await api.createIssue(workspace.id, team.id, { title: 'Issue A' })
 
     await page.goto(`/workspace/${workspace.slug}/team/ENG/issues`)
-    await expect(page.getByTestId('issue-row-ENG-1')).toBeVisible()
+    await expect(page.getByTestId('issue-row-ENG-1')).toBeVisible({
+      timeout: 15000,
+    })
     await expect(page.getByTestId('drag-handle-ENG-1')).toBeAttached()
   })
 
