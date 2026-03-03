@@ -16,9 +16,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugRouteImport } from './routes/_authenticated/workspace/$workspaceSlug'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/index'
+import { Route as AuthenticatedWorkspaceWorkspaceSlugSettingsRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/settings'
+import { Route as AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/settings/index'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/my-issues/index'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/settings/teams'
+import { Route as AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/settings/members'
+import { Route as AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/settings/labels'
+import { Route as AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/settings/general'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issues/index'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/backlog/index'
 import { Route as AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRouteImport } from './routes/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/active/index'
@@ -60,6 +65,18 @@ const AuthenticatedWorkspaceWorkspaceSlugIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedWorkspaceWorkspaceSlugRoute,
   } as any)
+const AuthenticatedWorkspaceWorkspaceSlugSettingsRoute =
+  AuthenticatedWorkspaceWorkspaceSlugSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedWorkspaceWorkspaceSlugRoute,
+  } as any)
+const AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRoute =
+  AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedWorkspaceWorkspaceSlugSettingsRoute,
+  } as any)
 const AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute =
   AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRouteImport.update({
     id: '/my-issues/',
@@ -74,9 +91,27 @@ const AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRoute =
   } as any)
 const AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute =
   AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRouteImport.update({
-    id: '/settings/teams',
-    path: '/settings/teams',
-    getParentRoute: () => AuthenticatedWorkspaceWorkspaceSlugRoute,
+    id: '/teams',
+    path: '/teams',
+    getParentRoute: () => AuthenticatedWorkspaceWorkspaceSlugSettingsRoute,
+  } as any)
+const AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRoute =
+  AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () => AuthenticatedWorkspaceWorkspaceSlugSettingsRoute,
+  } as any)
+const AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRoute =
+  AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRouteImport.update({
+    id: '/labels',
+    path: '/labels',
+    getParentRoute: () => AuthenticatedWorkspaceWorkspaceSlugSettingsRoute,
+  } as any)
+const AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRoute =
+  AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRouteImport.update({
+    id: '/general',
+    path: '/general',
+    getParentRoute: () => AuthenticatedWorkspaceWorkspaceSlugSettingsRoute,
   } as any)
 const AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRoute =
   AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssuesIndexRouteImport.update(
@@ -121,10 +156,15 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/workspace/$workspaceSlug': typeof AuthenticatedWorkspaceWorkspaceSlugRouteWithChildren
+  '/workspace/$workspaceSlug/settings': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRouteWithChildren
   '/workspace/$workspaceSlug/': typeof AuthenticatedWorkspaceWorkspaceSlugIndexRoute
+  '/workspace/$workspaceSlug/settings/general': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRoute
+  '/workspace/$workspaceSlug/settings/labels': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRoute
+  '/workspace/$workspaceSlug/settings/members': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRoute
   '/workspace/$workspaceSlug/settings/teams': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren
   '/workspace/$workspaceSlug/my-issues/': typeof AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute
+  '/workspace/$workspaceSlug/settings/': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/active/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/backlog/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute
@@ -136,9 +176,13 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/workspace/$workspaceSlug': typeof AuthenticatedWorkspaceWorkspaceSlugIndexRoute
+  '/workspace/$workspaceSlug/settings/general': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRoute
+  '/workspace/$workspaceSlug/settings/labels': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRoute
+  '/workspace/$workspaceSlug/settings/members': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRoute
   '/workspace/$workspaceSlug/settings/teams': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren
   '/workspace/$workspaceSlug/my-issues': typeof AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute
+  '/workspace/$workspaceSlug/settings': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/active': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute
   '/workspace/$workspaceSlug/team/$teamIdentifier/backlog': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute
@@ -152,10 +196,15 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/workspace/$workspaceSlug': typeof AuthenticatedWorkspaceWorkspaceSlugRouteWithChildren
+  '/_authenticated/workspace/$workspaceSlug/settings': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRouteWithChildren
   '/_authenticated/workspace/$workspaceSlug/': typeof AuthenticatedWorkspaceWorkspaceSlugIndexRoute
+  '/_authenticated/workspace/$workspaceSlug/settings/general': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRoute
+  '/_authenticated/workspace/$workspaceSlug/settings/labels': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRoute
+  '/_authenticated/workspace/$workspaceSlug/settings/members': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRoute
   '/_authenticated/workspace/$workspaceSlug/settings/teams': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren
   '/_authenticated/workspace/$workspaceSlug/my-issues/': typeof AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute
+  '/_authenticated/workspace/$workspaceSlug/settings/': typeof AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRoute
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/active/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute
   '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/backlog/': typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierBacklogIndexRoute
@@ -169,10 +218,15 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/workspace/$workspaceSlug'
+    | '/workspace/$workspaceSlug/settings'
     | '/workspace/$workspaceSlug/'
+    | '/workspace/$workspaceSlug/settings/general'
+    | '/workspace/$workspaceSlug/settings/labels'
+    | '/workspace/$workspaceSlug/settings/members'
     | '/workspace/$workspaceSlug/settings/teams'
     | '/workspace/$workspaceSlug/team/$teamIdentifier'
     | '/workspace/$workspaceSlug/my-issues/'
+    | '/workspace/$workspaceSlug/settings/'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/active/'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/backlog/'
@@ -184,9 +238,13 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/workspace/$workspaceSlug'
+    | '/workspace/$workspaceSlug/settings/general'
+    | '/workspace/$workspaceSlug/settings/labels'
+    | '/workspace/$workspaceSlug/settings/members'
     | '/workspace/$workspaceSlug/settings/teams'
     | '/workspace/$workspaceSlug/team/$teamIdentifier'
     | '/workspace/$workspaceSlug/my-issues'
+    | '/workspace/$workspaceSlug/settings'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/active'
     | '/workspace/$workspaceSlug/team/$teamIdentifier/backlog'
@@ -199,10 +257,15 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_authenticated/dashboard'
     | '/_authenticated/workspace/$workspaceSlug'
+    | '/_authenticated/workspace/$workspaceSlug/settings'
     | '/_authenticated/workspace/$workspaceSlug/'
+    | '/_authenticated/workspace/$workspaceSlug/settings/general'
+    | '/_authenticated/workspace/$workspaceSlug/settings/labels'
+    | '/_authenticated/workspace/$workspaceSlug/settings/members'
     | '/_authenticated/workspace/$workspaceSlug/settings/teams'
     | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier'
     | '/_authenticated/workspace/$workspaceSlug/my-issues/'
+    | '/_authenticated/workspace/$workspaceSlug/settings/'
     | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issue/$issueIdentifier'
     | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/active/'
     | '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/backlog/'
@@ -267,6 +330,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugIndexRouteImport
       parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugRoute
     }
+    '/_authenticated/workspace/$workspaceSlug/settings': {
+      id: '/_authenticated/workspace/$workspaceSlug/settings'
+      path: '/settings'
+      fullPath: '/workspace/$workspaceSlug/settings'
+      preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRouteImport
+      parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugRoute
+    }
+    '/_authenticated/workspace/$workspaceSlug/settings/': {
+      id: '/_authenticated/workspace/$workspaceSlug/settings/'
+      path: '/'
+      fullPath: '/workspace/$workspaceSlug/settings/'
+      preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRoute
+    }
     '/_authenticated/workspace/$workspaceSlug/my-issues/': {
       id: '/_authenticated/workspace/$workspaceSlug/my-issues/'
       path: '/my-issues'
@@ -283,10 +360,31 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/workspace/$workspaceSlug/settings/teams': {
       id: '/_authenticated/workspace/$workspaceSlug/settings/teams'
-      path: '/settings/teams'
+      path: '/teams'
       fullPath: '/workspace/$workspaceSlug/settings/teams'
       preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRouteImport
-      parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugRoute
+      parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRoute
+    }
+    '/_authenticated/workspace/$workspaceSlug/settings/members': {
+      id: '/_authenticated/workspace/$workspaceSlug/settings/members'
+      path: '/members'
+      fullPath: '/workspace/$workspaceSlug/settings/members'
+      preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRouteImport
+      parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRoute
+    }
+    '/_authenticated/workspace/$workspaceSlug/settings/labels': {
+      id: '/_authenticated/workspace/$workspaceSlug/settings/labels'
+      path: '/labels'
+      fullPath: '/workspace/$workspaceSlug/settings/labels'
+      preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRouteImport
+      parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRoute
+    }
+    '/_authenticated/workspace/$workspaceSlug/settings/general': {
+      id: '/_authenticated/workspace/$workspaceSlug/settings/general'
+      path: '/general'
+      fullPath: '/workspace/$workspaceSlug/settings/general'
+      preLoaderRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRouteImport
+      parentRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRoute
     }
     '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issues/': {
       id: '/_authenticated/workspace/$workspaceSlug/team/$teamIdentifier/issues/'
@@ -319,6 +417,33 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedWorkspaceWorkspaceSlugSettingsRouteChildren {
+  AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRoute
+  AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRoute
+  AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRoute
+  AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute
+  AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRoute
+}
+
+const AuthenticatedWorkspaceWorkspaceSlugSettingsRouteChildren: AuthenticatedWorkspaceWorkspaceSlugSettingsRouteChildren =
+  {
+    AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRoute:
+      AuthenticatedWorkspaceWorkspaceSlugSettingsGeneralRoute,
+    AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRoute:
+      AuthenticatedWorkspaceWorkspaceSlugSettingsLabelsRoute,
+    AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRoute:
+      AuthenticatedWorkspaceWorkspaceSlugSettingsMembersRoute,
+    AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute:
+      AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute,
+    AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRoute:
+      AuthenticatedWorkspaceWorkspaceSlugSettingsIndexRoute,
+  }
+
+const AuthenticatedWorkspaceWorkspaceSlugSettingsRouteWithChildren =
+  AuthenticatedWorkspaceWorkspaceSlugSettingsRoute._addFileChildren(
+    AuthenticatedWorkspaceWorkspaceSlugSettingsRouteChildren,
+  )
+
 interface AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteChildren {
   AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierIssueIssueIdentifierRoute
   AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierActiveIndexRoute
@@ -344,18 +469,18 @@ const AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren =
   )
 
 interface AuthenticatedWorkspaceWorkspaceSlugRouteChildren {
+  AuthenticatedWorkspaceWorkspaceSlugSettingsRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsRouteWithChildren
   AuthenticatedWorkspaceWorkspaceSlugIndexRoute: typeof AuthenticatedWorkspaceWorkspaceSlugIndexRoute
-  AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute: typeof AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute
   AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRoute: typeof AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren
   AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute: typeof AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute
 }
 
 const AuthenticatedWorkspaceWorkspaceSlugRouteChildren: AuthenticatedWorkspaceWorkspaceSlugRouteChildren =
   {
+    AuthenticatedWorkspaceWorkspaceSlugSettingsRoute:
+      AuthenticatedWorkspaceWorkspaceSlugSettingsRouteWithChildren,
     AuthenticatedWorkspaceWorkspaceSlugIndexRoute:
       AuthenticatedWorkspaceWorkspaceSlugIndexRoute,
-    AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute:
-      AuthenticatedWorkspaceWorkspaceSlugSettingsTeamsRoute,
     AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRoute:
       AuthenticatedWorkspaceWorkspaceSlugTeamTeamIdentifierRouteWithChildren,
     AuthenticatedWorkspaceWorkspaceSlugMyIssuesIndexRoute:

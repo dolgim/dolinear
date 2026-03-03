@@ -37,3 +37,19 @@ export function useCreateWorkspace() {
     },
   })
 }
+
+export function useUpdateWorkspace() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { workspaceId: string; name: string }) =>
+      apiClient
+        .patch<ApiResponse<Workspace>>(`/workspaces/${data.workspaceId}`, {
+          name: data.name,
+        })
+        .then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaces.all })
+    },
+  })
+}

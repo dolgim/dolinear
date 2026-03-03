@@ -39,4 +39,9 @@ export const queryKeys = {
     all: ['teamMembers'] as const,
     list: (teamId: string) => ['teamMembers', 'list', teamId] as const,
   },
+  workspaceMembers: {
+    all: ['workspaceMembers'] as const,
+    list: (workspaceId: string) =>
+      ['workspaceMembers', 'list', workspaceId] as const,
+  },
 }

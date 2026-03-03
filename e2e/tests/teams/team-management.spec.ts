@@ -64,13 +64,14 @@ test.describe('Team Management', () => {
     await expect(dialog.getByTestId('team-identifier-input')).toHaveValue('ENG')
   })
 
-  test('should navigate to teams settings page', async ({ page }) => {
+  test('should navigate to settings page', async ({ page }) => {
     await page.goto(`/workspace/${workspaceSlug}/my-issues`)
 
-    await page.getByTestId('sidebar-teams-settings').click()
+    await page.getByTestId('sidebar-settings').click()
 
-    await page.waitForURL(`/workspace/${workspaceSlug}/settings/teams`)
-    await expect(page.getByTestId('teams-settings-page')).toBeVisible()
+    await page.waitForURL(`/workspace/${workspaceSlug}/settings/general`)
+    await expect(page.getByTestId('settings-layout')).toBeVisible()
+    await expect(page.getByTestId('general-settings-page')).toBeVisible()
   })
 
   test('should list teams on settings page', async ({ page, api }) => {

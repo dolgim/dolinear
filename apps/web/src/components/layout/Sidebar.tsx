@@ -99,13 +99,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </li>
             <li>
               <Link
-                to="/workspace/$workspaceSlug/settings/teams"
+                to="/workspace/$workspaceSlug/settings/general"
                 params={{ workspaceSlug: currentSlug }}
-                data-testid="sidebar-teams-settings"
+                data-testid="sidebar-settings"
                 className="flex items-center rounded px-3 py-1.5 text-sm text-gray-500 hover:bg-white/5 hover:text-gray-300"
                 activeProps={{ className: 'bg-white/10 text-white' }}
               >
-                Teams settings
+                Settings
               </Link>
             </li>
           </ul>
