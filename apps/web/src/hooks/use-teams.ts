@@ -35,7 +35,40 @@ export function useCreateTeam() {
       name: string
       identifier: string
       workspaceId: string
-    }) => apiClient.post<ApiResponse<Team>>('/teams', data).then((r) => r.data),
+    }) =>
+      apiClient
+        .post<
+          ApiResponse<Team>
+        >(`/workspaces/${data.workspaceId}/teams`, { name: data.name, identifier: data.identifier })
+        .then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.teams.all })
+    },
+  })
+}
+
+export function useUpdateTeam() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { workspaceId: string; teamId: string; name: string }) =>
+      apiClient
+        .patch<
+          ApiResponse<Team>
+        >(`/workspaces/${data.workspaceId}/teams/${data.teamId}`, { name: data.name })
+        .then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.teams.all })
+    },
+  })
+}
+
+export function useDeleteTeam() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { workspaceId: string; teamId: string }) =>
+      apiClient.del(`/workspaces/${data.workspaceId}/teams/${data.teamId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.teams.all })
     },
