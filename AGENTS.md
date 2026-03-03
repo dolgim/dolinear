@@ -275,13 +275,13 @@ After testing is complete, report the list of discovered bugs (including created
 
 Parallel agents each work in a separate worktree. **The leader manages the worktree lifecycle**; implementation agents do not create or delete worktrees.
 
-> **Agent team worktrees** are created outside the project at `~/.claude/worktrees/dolinear/`. Creating worktrees inside the project (`.claude/worktrees/`) causes duplicate loading of CLAUDE.md/AGENTS.md, wasting context tokens. Note: session worktrees created by the `--worktree` flag are hardcoded by Claude Code to `.claude/worktrees/` and cannot be changed (known limitation).
+> **Agent team worktrees** are created inside the project at `.claude/worktrees/`. This ensures teammates inherit project-level permission settings and avoid shell cwd resets. The tradeoff is CLAUDE.md/AGENTS.md double-loading (extra token cost), which is acceptable compared to the permission issues with external worktrees.
 
 The following rules must be strictly observed:
 
 **Leader (main agent):**
 
-- **Worktree creation**: Run `git worktree add ~/.claude/worktrees/dolinear/<agent-name> -b <branch> main` **before** spawning the agent
+- **Worktree creation**: Run `git worktree add .claude/worktrees/<agent-name> -b <branch> main` **before** spawning the agent
 - **Agent spawning**: Pass the worktree absolute path in the prompt and instruct the agent to `cd` into it
 - **PR merge order**: Terminate teammate → `git worktree remove <path>` → `gh pr merge <PR> --squash --delete-branch`
   - `gh pr merge --delete-branch` fails if a worktree occupies the branch (GitHub CLI #3442). Always remove the worktree first
@@ -290,7 +290,7 @@ The following rules must be strictly observed:
 **Implementation agent:**
 
 - `cd` to the worktree path specified in the prompt
-- Verify with `pwd` that you are under `~/.claude/worktrees/dolinear/` (if not, stop work immediately and report to the leader)
+- Verify with `pwd` that you are under `.claude/worktrees/` (if not, stop work immediately and report to the leader)
 - Setup sequence: `cd <path>` → `pnpm install` → `pnpm db:setup` → `pnpm --filter api db:push`
 - Do not use `git worktree add`, `git worktree remove`, or `git checkout -b`
 - Do not `cd` to the main repo directory
