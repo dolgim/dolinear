@@ -1,4 +1,28 @@
+import type { Locator, Page } from '@playwright/test'
 import { test, expect } from '../../fixtures/base.fixture.js'
+
+/**
+ * Perform a drag-and-drop using manual mouse events.
+ * Playwright's built-in dragTo doesn't reliably trigger @dnd-kit's PointerSensor
+ * because it needs a minimum movement distance (activationConstraint: { distance: 5 }).
+ */
+async function dndDrag(page: Page, source: Locator, target: Locator) {
+  const sourceBox = await source.boundingBox()
+  const targetBox = await target.boundingBox()
+  if (!sourceBox || !targetBox) throw new Error('Could not get bounding boxes')
+
+  const sx = sourceBox.x + sourceBox.width / 2
+  const sy = sourceBox.y + sourceBox.height / 2
+  const tx = targetBox.x + targetBox.width / 2
+  const ty = targetBox.y + targetBox.height / 2
+
+  await page.mouse.move(sx, sy)
+  await page.mouse.down()
+  // Move in small steps to trigger the activation constraint
+  await page.mouse.move(sx, sy + 10, { steps: 5 })
+  await page.mouse.move(tx, ty, { steps: 10 })
+  await page.mouse.up()
+}
 
 test.describe('Drag and Drop Issue Sorting', () => {
   test('should display drag handles on issue rows', async ({ page, api }) => {
@@ -32,7 +56,7 @@ test.describe('Drag and Drop Issue Sorting', () => {
     const dragHandle = page.getByTestId('drag-handle-ENG-3')
     const targetRow = page.getByTestId('issue-row-ENG-1')
 
-    await dragHandle.dragTo(targetRow)
+    await dndDrag(page, dragHandle, targetRow)
 
     // After drag: Issue Two, Issue One, Issue Three
     await expect(rows.nth(0)).toContainText('Issue Two')
@@ -57,7 +81,7 @@ test.describe('Drag and Drop Issue Sorting', () => {
     // Drag Beta below Alpha
     const dragHandle = page.getByTestId('drag-handle-ENG-2')
     const targetRow = page.getByTestId('issue-row-ENG-1')
-    await dragHandle.dragTo(targetRow)
+    await dndDrag(page, dragHandle, targetRow)
 
     // After drag: Alpha, Beta
     await expect(rows.nth(0)).toContainText('Alpha')
