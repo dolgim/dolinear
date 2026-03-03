@@ -26,7 +26,20 @@ test.describe('Login', () => {
     await page.getByLabel('Password').fill('wrongpassword123')
     await page.getByRole('button', { name: 'Sign in' }).click()
 
-    // Should stay on login page
-    await expect(page).toHaveURL(/\/login/)
+    const errorAlert = page.getByTestId('auth-error')
+    await expect(errorAlert).toBeVisible()
+    await expect(errorAlert).toContainText('Invalid email or password')
+  })
+
+  test('should show error for non-existent email', async ({ page }) => {
+    await page.goto('/login')
+
+    await page.getByLabel('Email').fill('nonexistent@dolinear.local')
+    await page.getByLabel('Password').fill('somepassword123')
+    await page.getByRole('button', { name: 'Sign in' }).click()
+
+    const errorAlert = page.getByTestId('auth-error')
+    await expect(errorAlert).toBeVisible()
+    await expect(errorAlert).toContainText('Invalid email or password')
   })
 })
