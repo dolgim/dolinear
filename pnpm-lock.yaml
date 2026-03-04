@@ -60,6 +60,9 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
+      '@dolinear/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@testcontainers/postgresql':
         specifier: 11.12.0
         version: 11.12.0
@@ -139,6 +142,9 @@ importers:
         specifier: ^3.5.0
         version: 3.5.0
     devDependencies:
+      '@dolinear/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@tailwindcss/vite':
         specifier: ^4.2.1
         version: 4.2.1(vite@7.3.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
@@ -184,6 +190,9 @@ importers:
 
   e2e:
     devDependencies:
+      '@dolinear/env':
+        specifier: workspace:*
+        version: link:../packages/env
       '@playwright/test':
         specifier: ^1.52.0
         version: 1.58.2
@@ -193,6 +202,18 @@ importers:
       postgres:
         specifier: ^3.4.8
         version: 3.4.8
+
+  packages/env:
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.19.11
+      portless:
+        specifier: latest
+        version: 0.4.2
+      typescript:
+        specifier: ^5
+        version: 5.9.3
 
   packages/shared:
     devDependencies:
@@ -2195,6 +2216,10 @@ packages:
     resolution: {integrity: sha512-NUPRluOfOiTKBKvWPtSD4PhFvWCqOi0BGStNWs57X9js7XGTprSmFoz5F0tWhR4WPjNeR9jXqdC7/UpSJTnlRg==}
     engines: {node: '>=18'}
 
+  chalk@5.6.2:
+    resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+
   character-entities-html4@2.1.0:
     resolution: {integrity: sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA==}
 
@@ -3210,6 +3235,12 @@ packages:
   playwright@1.58.2:
     resolution: {integrity: sha512-vA30H8Nvkq/cPBnNw4Q8TWz1EJyqgpuinBcHET0YVJVFldr8JDNiU9LaWAE1KqSkRYazuaBhTpB5ZzShOezQ6A==}
     engines: {node: '>=18'}
+    hasBin: true
+
+  portless@0.4.2:
+    resolution: {integrity: sha512-/G3jIeD1XokoO9KY/lUGTV9irKz3tgx8yqHkz+hvj/86QeR219GvYFB+QEfpvjRlvvLVJa5vE7BkRfBZBe/lQg==}
+    engines: {node: '>=20'}
+    os: [darwin, linux]
     hasBin: true
 
   postcss@8.5.6:
@@ -5688,6 +5719,8 @@ snapshots:
 
   chai@6.2.2: {}
 
+  chalk@5.6.2: {}
+
   character-entities-html4@2.1.0: {}
 
   character-entities-legacy@3.0.0: {}
@@ -6788,6 +6821,10 @@ snapshots:
       playwright-core: 1.58.2
     optionalDependencies:
       fsevents: 2.3.2
+
+  portless@0.4.2:
+    dependencies:
+      chalk: 5.6.2
 
   postcss@8.5.6:
     dependencies:

@@ -17,6 +17,14 @@ DB_SUFFIX=$(echo "$BRANCH" | sed 's|.*/||' | tr '[:upper:]' '[:lower:]' | sed 's
 
 DB_NAME="dolinear_${DB_SUFFIX}"
 
+# Derive portless suffix (hyphens instead of underscores, suitable for hostnames)
+# For 'main' branch: empty (no suffix)
+if [ "$BRANCH" = "main" ]; then
+  PORTLESS_SUFFIX=""
+else
+  PORTLESS_SUFFIX=$(echo "$BRANCH" | sed 's|.*/||' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
+fi
+
 # PostgreSQL connection defaults (can be overridden via environment)
 PGHOST="${PGHOST:-localhost}"
 PGPORT="${PGPORT:-5432}"
@@ -48,24 +56,34 @@ fi
 # Build the new DATABASE_URL
 DATABASE_URL="postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${DB_NAME}"
 
-# Helper: update or add DATABASE_URL in an .env file
-update_env_file() {
+# Helper: update or add a KEY=VALUE in an .env file
+set_env_var() {
   local env_file="$1"
+  local key="$2"
+  local value="$3"
   if [ -f "$env_file" ]; then
-    if grep -q '^DATABASE_URL=' "$env_file"; then
-      sed -i.bak "s|^DATABASE_URL=.*|DATABASE_URL=${DATABASE_URL}|" "$env_file"
+    if grep -q "^${key}=" "$env_file"; then
+      sed -i.bak "s|^${key}=.*|${key}=${value}|" "$env_file"
       rm -f "$env_file.bak"
     else
-      echo "DATABASE_URL=${DATABASE_URL}" >> "$env_file"
+      echo "${key}=${value}" >> "$env_file"
     fi
   else
-    echo "DATABASE_URL=${DATABASE_URL}" > "$env_file"
+    echo "${key}=${value}" > "$env_file"
   fi
-  echo "  Updated $env_file"
 }
 
-# Update .env in project root and apps/api (drizzle/dotenv reads from CWD)
+# Update .env files
 echo ""
-echo "Updating .env files with DATABASE_URL=${DATABASE_URL}"
-update_env_file "$PROJECT_ROOT/.env"
-update_env_file "$PROJECT_ROOT/apps/api/.env"
+echo "Updating .env files..."
+echo "  DATABASE_URL=${DATABASE_URL}"
+echo "  PORTLESS_SUFFIX=${PORTLESS_SUFFIX:-<empty>}"
+
+# Root .env: DATABASE_URL + PORTLESS_SUFFIX (portless-dev reads root .env)
+set_env_var "$PROJECT_ROOT/.env" "DATABASE_URL" "$DATABASE_URL"
+set_env_var "$PROJECT_ROOT/.env" "PORTLESS_SUFFIX" "$PORTLESS_SUFFIX"
+echo "  Updated $PROJECT_ROOT/.env"
+
+# API .env: DATABASE_URL only (dotenv/config loads from CWD)
+set_env_var "$PROJECT_ROOT/apps/api/.env" "DATABASE_URL" "$DATABASE_URL"
+echo "  Updated $PROJECT_ROOT/apps/api/.env"

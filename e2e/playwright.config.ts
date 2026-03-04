@@ -1,8 +1,19 @@
 import { defineConfig, devices } from '@playwright/test'
 import { config } from 'dotenv'
 import { resolve } from 'path'
+import {
+  resolveAppUrl,
+  getPortlessSuffix,
+  isPortlessDisabled,
+} from '@dolinear/env'
 
+config({ path: resolve(import.meta.dirname, '../.env') })
 config({ path: resolve(import.meta.dirname, '../apps/api/.env') })
+
+const suffix = getPortlessSuffix()
+const disabled = isPortlessDisabled()
+const webURL = resolveAppUrl('web', { suffix, portlessDisabled: disabled })
+const apiURL = resolveAppUrl('api', { suffix, portlessDisabled: disabled })
 
 export default defineConfig({
   testDir: './tests',
@@ -13,7 +24,7 @@ export default defineConfig({
   reporter: process.env.CI ? 'html' : 'list',
 
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: webURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
@@ -44,14 +55,14 @@ export default defineConfig({
   webServer: [
     {
       command: 'pnpm --filter api dev',
-      url: 'http://localhost:3001/health',
+      url: `${apiURL}/health`,
       reuseExistingServer: !process.env.CI,
       cwd: resolve(import.meta.dirname, '..'),
       timeout: 30_000,
     },
     {
       command: 'pnpm --filter web dev',
-      url: 'http://localhost:5173',
+      url: webURL,
       reuseExistingServer: !process.env.CI,
       cwd: resolve(import.meta.dirname, '..'),
       timeout: 30_000,

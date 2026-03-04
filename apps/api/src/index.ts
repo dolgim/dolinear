@@ -13,7 +13,12 @@ const app = new Hono<Env>()
 app.use(
   '*',
   cors({
-    origin: 'http://localhost:5173',
+    origin: (origin) => {
+      if (!origin) return 'http://localhost:5173'
+      if (origin.endsWith('.localhost:1355')) return origin
+      if (origin === 'http://localhost:5173') return origin
+      return null
+    },
     credentials: true,
   }),
 )
@@ -25,7 +30,9 @@ app.on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw))
 app.route('/health', healthRoute)
 app.route('/api/workspaces', workspacesRoute)
 
-const server = serve({ fetch: app.fetch, port: 3001 }, (info) => {
+const port = Number(process.env.PORT || 3001)
+
+const server = serve({ fetch: app.fetch, port }, (info) => {
   console.log(`API server running on http://localhost:${info.port}`)
 })
 
