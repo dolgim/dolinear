@@ -72,6 +72,8 @@ if (process.env.PORTLESS === '0') {
     stdio: 'inherit',
     env: process.env,
   })
+  process.on('SIGINT', () => child.kill('SIGINT'))
+  process.on('SIGTERM', () => child.kill('SIGTERM'))
   child.on('exit', (code) => process.exit(code ?? 1))
   child.on('error', (err) => {
     console.error(`Failed to start: ${err.message}`)
@@ -95,6 +97,8 @@ if (process.env.PORTLESS === '0') {
     stdio: 'inherit',
     env: process.env,
   })
+  process.on('SIGINT', () => child.kill('SIGINT'))
+  process.on('SIGTERM', () => child.kill('SIGTERM'))
   child.on('exit', (code) => process.exit(code ?? 1))
   child.on('error', (err) => {
     console.error(`Failed to start portless: ${err.message}`)

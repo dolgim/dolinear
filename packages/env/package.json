@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^22",
-    "portless": "latest",
+    "portless": "^0.4.2",
     "typescript": "^5"
   }
 }
