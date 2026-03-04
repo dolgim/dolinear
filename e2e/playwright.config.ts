@@ -4,6 +4,12 @@ import { resolve } from 'path'
 
 config({ path: resolve(import.meta.dirname, '../apps/api/.env') })
 
+const suffix = process.env.PORTLESS_SUFFIX
+const apiName = suffix ? `api-${suffix}` : 'api'
+const webName = suffix ? `web-${suffix}` : 'web'
+const apiURL = `http://${apiName}.localhost:1355`
+const webURL = `http://${webName}.localhost:1355`
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: false,
@@ -13,7 +19,7 @@ export default defineConfig({
   reporter: process.env.CI ? 'html' : 'list',
 
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: webURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
@@ -44,14 +50,14 @@ export default defineConfig({
   webServer: [
     {
       command: 'pnpm --filter api dev',
-      url: 'http://localhost:3001/health',
+      url: `${apiURL}/health`,
       reuseExistingServer: !process.env.CI,
       cwd: resolve(import.meta.dirname, '..'),
       timeout: 30_000,
     },
     {
       command: 'pnpm --filter web dev',
-      url: 'http://localhost:5173',
+      url: webURL,
       reuseExistingServer: !process.env.CI,
       cwd: resolve(import.meta.dirname, '..'),
       timeout: 30_000,

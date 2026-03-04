@@ -4,4 +4,6 @@ export const TEST_USER = {
   password: 'e2eTestPass123',
 }
 
-export const BASE_URL = 'http://localhost:5173'
+const suffix = process.env.PORTLESS_SUFFIX
+const webName = suffix ? `web-${suffix}` : 'web'
+export const BASE_URL = `http://${webName}.localhost:1355`

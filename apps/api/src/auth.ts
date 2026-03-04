@@ -11,5 +11,10 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: ['http://localhost:5173'],
+  trustedOrigins: (request) => {
+    const origin = request?.headers.get('origin') ?? ''
+    const trusted: string[] = ['http://localhost:5173']
+    if (origin.endsWith('.localhost:1355')) trusted.push(origin)
+    return trusted
+  },
 })
