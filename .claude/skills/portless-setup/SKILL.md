@@ -1,3 +1,8 @@
+---
+name: portless-setup
+description: Portless dev proxy setup guide — worktree-specific port isolation, parallel E2E execution, and troubleshooting
+---
+
 # Portless Setup Guide
 
 ## Overview
