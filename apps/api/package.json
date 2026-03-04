@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "sh -c '. ./.env 2>/dev/null; exec portless api${PORTLESS_SUFFIX:+-$PORTLESS_SUFFIX} node --watch src/index.ts'",
+    "dev": "portless-dev api node --watch src/index.ts",
     "build": "tsc",
     "db:push": "node node_modules/drizzle-kit/bin.cjs push",
     "db:generate": "node node_modules/drizzle-kit/bin.cjs generate",
@@ -21,6 +21,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@dolinear/env": "workspace:*",
     "@testcontainers/postgresql": "11.12.0",
     "@types/node": "^22",
     "dotenv": "^17.3.1",

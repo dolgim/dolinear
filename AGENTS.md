@@ -41,9 +41,9 @@ pnpm --filter api test          # Vitest + Testcontainers (Docker required)
 pnpm lint                       # ESLint
 pnpm format                     # Prettier
 
-# portless (dev proxy — install globally: npm i -g portless)
-portless list                   # show active routes
-portless proxy start/stop       # control proxy
+# portless (dev proxy — installed via @dolinear/env)
+pnpm exec portless list         # show active routes
+pnpm exec portless proxy start/stop  # control proxy
 PORTLESS=0 pnpm dev             # disable portless (fallback to fixed ports)
 ```
 
@@ -58,6 +58,8 @@ pnpm --filter api db:push   # push schema
 ```
 
 The `PORTLESS_SUFFIX` env var (derived from the branch name) ensures each worktree gets unique portless app names (e.g., `api-foo`, `web-foo` for branch `feature/foo`), enabling parallel dev servers without port conflicts.
+
+portless is installed as a devDependency of `@dolinear/env` (not globally). The `portless-dev` CLI wrapper handles `.env` loading, suffix injection, and `PORTLESS=0` fallback.
 
 ## Workflow
 

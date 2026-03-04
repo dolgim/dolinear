@@ -1,14 +1,19 @@
 import { defineConfig, devices } from '@playwright/test'
 import { config } from 'dotenv'
 import { resolve } from 'path'
+import {
+  resolveAppUrl,
+  getPortlessSuffix,
+  isPortlessDisabled,
+} from '@dolinear/env'
 
+config({ path: resolve(import.meta.dirname, '../.env') })
 config({ path: resolve(import.meta.dirname, '../apps/api/.env') })
 
-const suffix = process.env.PORTLESS_SUFFIX
-const apiName = suffix ? `api-${suffix}` : 'api'
-const webName = suffix ? `web-${suffix}` : 'web'
-const apiURL = `http://${apiName}.localhost:1355`
-const webURL = `http://${webName}.localhost:1355`
+const suffix = getPortlessSuffix()
+const disabled = isPortlessDisabled()
+const webURL = resolveAppUrl('web', { suffix, portlessDisabled: disabled })
+const apiURL = resolveAppUrl('api', { suffix, portlessDisabled: disabled })
 
 export default defineConfig({
   testDir: './tests',

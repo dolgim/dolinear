@@ -7,17 +7,17 @@ description: Portless dev proxy reference — URL construction, daily commands, 
 
 # Portless Reference
 
-[Portless](https://port1355.dev/) replaces fixed port numbers with stable named `.localhost` URLs via a reverse proxy on port 1355. Install globally: `npm install -g portless` (Node.js 20+, macOS/Linux).
+[Portless](https://port1355.dev/) replaces fixed port numbers with stable named `.localhost` URLs via a reverse proxy on port 1355. Installed as a devDependency of `@dolinear/env` (not globally).
 
 ## Quick Reference
 
 | Command | Purpose |
 |---------|---------|
 | `pnpm dev` | Start API + Web servers (portless auto-starts proxy) |
-| `portless list` | Show active routes and assigned ports |
-| `portless proxy start` | Start proxy daemon manually |
-| `portless proxy stop` | Stop proxy daemon |
-| `portless proxy start --foreground` | Debug mode (logs to stdout) |
+| `pnpm exec portless list` | Show active routes and assigned ports |
+| `pnpm exec portless proxy start` | Start proxy daemon manually |
+| `pnpm exec portless proxy stop` | Stop proxy daemon |
+| `pnpm exec portless proxy start --foreground` | Debug mode (logs to stdout) |
 | `PORTLESS=0 pnpm dev` | Bypass portless, use fixed ports (API :3001, Web :5173) |
 
 ## URL Construction
@@ -43,14 +43,15 @@ Files where portless is wired into the project:
 
 | File | Role |
 |------|------|
-| `scripts/setup-db.sh` | Derives `PORTLESS_SUFFIX` from branch name, writes to `.env` files |
-| `apps/api/package.json` | Dev script: `portless api[-suffix] node --watch` |
-| `apps/web/package.json` | Dev script: `portless web[-suffix] vite` |
-| `apps/web/vite.config.ts` | Reads `PORTLESS_SUFFIX`, constructs dynamic proxy target for `/api` |
+| `packages/env/` | `@dolinear/env` — portless dependency, URL helpers, `portless-dev` CLI wrapper |
+| `scripts/setup-db.sh` | Derives `PORTLESS_SUFFIX` from branch name, writes to root `.env` and `apps/api/.env` |
+| `apps/api/package.json` | Dev script: `portless-dev api node --watch` |
+| `apps/web/package.json` | Dev script: `portless-dev web vite` |
+| `apps/web/vite.config.ts` | Uses `resolveAppUrl()` from `@dolinear/env` for dynamic proxy target |
 | `apps/api/src/index.ts` | Dynamic CORS: accepts any origin ending with `.localhost:1355` |
 | `apps/api/src/auth.ts` | Dynamic `trustedOrigins`: accepts `.localhost:1355` origins |
-| `e2e/playwright.config.ts` | Dynamic `baseURL` and `webServer` URLs from `PORTLESS_SUFFIX` |
-| `e2e/helpers/constants.ts` | Dynamic `BASE_URL` from `PORTLESS_SUFFIX` |
+| `e2e/playwright.config.ts` | Uses `resolveAppUrl()` for dynamic `baseURL` and `webServer` URLs |
+| `e2e/helpers/constants.ts` | Uses `resolveAppUrl()` for dynamic `BASE_URL` |
 
 ### CORS & Auth
 
@@ -76,8 +77,8 @@ The proxy uses `changeOrigin: true` to rewrite the Host header, which prevents r
 Each worktree gets unique portless app names automatically:
 
 1. `pnpm db:setup` derives `PORTLESS_SUFFIX` from the branch name
-2. The suffix is written to `.env` files (root, `apps/api`, `apps/web`)
-3. Dev scripts read the suffix and register unique names with portless (e.g., `api-foo`, `web-foo`)
+2. The suffix is written to root `.env` and `apps/api/.env`
+3. `portless-dev` CLI reads root `.env` and registers unique names with portless (e.g., `api-foo`, `web-foo`)
 4. Multiple worktrees run dev servers simultaneously without port conflicts
 
 Note: `PORTLESS_SUFFIX` uses hyphens (hostname-safe), while `DB_SUFFIX` uses underscores (SQL-safe). Both are derived from the same branch name.
@@ -115,16 +116,17 @@ Use this when: portless is not installed, the proxy has issues, or running in CI
 
 | Symptom | Fix |
 |---------|-----|
-| `portless: command not found` | `npm install -g portless` (requires Node.js 20+) |
-| Proxy not starting | `portless proxy start` (or `--foreground` to see logs) |
-| Stale routes / port conflicts | `portless list` to inspect, then `portless proxy stop && portless proxy start` |
-| CORS errors | Verify both servers registered (`portless list`); check `*.localhost:1355` pattern in `index.ts` and `auth.ts` |
-| Need HTTPS | `portless proxy start --https`, then `sudo portless trust` once to add CA |
+| `portless-dev: command not found` | Add `@dolinear/env: workspace:*` to devDependencies and run `pnpm install` |
+| Proxy not starting | `pnpm exec portless proxy start` (or `--foreground` to see logs) |
+| Stale routes / port conflicts | `pnpm exec portless list` to inspect, then `pnpm exec portless proxy stop && pnpm exec portless proxy start` |
+| CORS errors | Verify both servers registered (`pnpm exec portless list`); check `*.localhost:1355` pattern in `index.ts` and `auth.ts` |
+| Need HTTPS | `pnpm exec portless proxy start --https`, then `sudo pnpm exec portless trust` once to add CA |
 | State directory | `~/.portless/` (auto-created) |
 
 ## Notes
 
-- portless must be installed **globally** (`npm install -g portless`), not as a project dependency
+- portless is installed as a devDependency of `@dolinear/env`, not globally
+- The `portless-dev` CLI wrapper handles `.env` loading, suffix injection, and `PORTLESS=0` fallback
 - The proxy auto-starts on the first `portless <name> <cmd>` — manual `portless proxy start` is rarely needed
 - `main` branch uses no suffix: `api.localhost:1355`, `web.localhost:1355`
-- Dev scripts use shell conditional expansion `${PORTLESS_SUFFIX:+-$PORTLESS_SUFFIX}` — the suffix is only appended when non-empty
+- URL construction helpers (`resolveAppUrl`, `getPortlessSuffix`, etc.) are in `@dolinear/env` — use them instead of inline URL construction

@@ -3,15 +3,14 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { resolveAppUrl } from '@dolinear/env'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const suffix = env.PORTLESS_SUFFIX
-  const apiName = suffix ? `api-${suffix}` : 'api'
-  const apiTarget =
-    env.PORTLESS === '0'
-      ? 'http://localhost:3001'
-      : `http://${apiName}.localhost:1355`
+  const apiTarget = resolveAppUrl('api', {
+    suffix: env.PORTLESS_SUFFIX || undefined,
+    portlessDisabled: env.PORTLESS === '0',
+  })
 
   return {
     plugins: [TanStackRouterVite({ target: 'react' }), react(), tailwindcss()],

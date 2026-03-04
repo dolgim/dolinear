@@ -73,14 +73,17 @@ set_env_var() {
   fi
 }
 
-# Update .env in project root, apps/api, and apps/web
+# Update .env files
 echo ""
 echo "Updating .env files..."
 echo "  DATABASE_URL=${DATABASE_URL}"
 echo "  PORTLESS_SUFFIX=${PORTLESS_SUFFIX:-<empty>}"
 
-for env_file in "$PROJECT_ROOT/.env" "$PROJECT_ROOT/apps/api/.env" "$PROJECT_ROOT/apps/web/.env"; do
-  set_env_var "$env_file" "DATABASE_URL" "$DATABASE_URL"
-  set_env_var "$env_file" "PORTLESS_SUFFIX" "$PORTLESS_SUFFIX"
-  echo "  Updated $env_file"
-done
+# Root .env: DATABASE_URL + PORTLESS_SUFFIX (portless-dev reads root .env)
+set_env_var "$PROJECT_ROOT/.env" "DATABASE_URL" "$DATABASE_URL"
+set_env_var "$PROJECT_ROOT/.env" "PORTLESS_SUFFIX" "$PORTLESS_SUFFIX"
+echo "  Updated $PROJECT_ROOT/.env"
+
+# API .env: DATABASE_URL only (dotenv/config loads from CWD)
+set_env_var "$PROJECT_ROOT/apps/api/.env" "DATABASE_URL" "$DATABASE_URL"
+echo "  Updated $PROJECT_ROOT/apps/api/.env"
