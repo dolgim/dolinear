@@ -1,6 +1,6 @@
 ---
 name: portless
-description: Portless dev proxy reference — URL construction, daily commands, worktree isolation, parallel E2E, fallback to fixed ports, integration map, and troubleshooting. Use this skill whenever working with portless, dev server URLs, localhost proxy, port conflicts, PORTLESS_SUFFIX, or parallel dev environments.
+description: Portless dev proxy reference — URL construction, daily commands, worktree isolation, parallel E2E, fallback to fixed ports, integration map, and troubleshooting. Use this skill whenever the user mentions portless, .localhost:1355 URLs, PORTLESS_SUFFIX, port conflicts, dev server setup in worktrees, CORS errors with portless origins, portless list/proxy commands, PORTLESS=0 fallback, or parallel dev/E2E environments. Also use when debugging 502 proxy errors or asking which files are wired into portless.
 ---
 
 > This document MUST be written and maintained in English.
