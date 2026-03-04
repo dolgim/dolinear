@@ -8,7 +8,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const suffix = env.PORTLESS_SUFFIX
   const apiName = suffix ? `api-${suffix}` : 'api'
-  const apiTarget = `http://${apiName}.localhost:1355`
+  const apiTarget =
+    env.PORTLESS === '0'
+      ? 'http://localhost:3001'
+      : `http://${apiName}.localhost:1355`
 
   return {
     plugins: [TanStackRouterVite({ target: 'react' }), react(), tailwindcss()],
