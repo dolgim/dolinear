@@ -119,8 +119,12 @@ Key things to discover:
 - UI patterns already in use (libraries, conventions)
 - What can be reused vs. what needs to be built
 
-**Persist the output**: Collect the Explore subagent's output and write a
-concise exploration summary to
+Instruct the subagent to **return its findings as text output only — do not
+write any files** (Explore agents have Bash access and may attempt to write
+files directly, which leads to unpredictable results).
+
+**Persist the output**: After the subagent returns, write the exploration
+summary yourself to
 `<worktree-absolute-path>/docs/specs/<feature>/exploration-notes.md`.
 Use an absolute path (the subagent's cwd may differ from the worktree).
 This file is consumed by the technical reviewers in Steps 4 and 10 (avoids
