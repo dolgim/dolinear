@@ -78,7 +78,7 @@ use the table below for principled exceptions:
 | Feature size | Skip candidates | Examples |
 |---|---|---|
 | **Large** (new page, multi-component) | None — run all steps | Kanban board, settings page |
-| **Medium** (new component in existing page) | Steps 6-7 (wireframes) — generate only 1-2 wireframes, completeness review optional | Filter bar, bulk actions |
+| **Medium** (new component in existing page) | Step 6: limit to 1-2 wireframes. Step 7 (completeness review): optional | Filter bar, bulk actions |
 | **Small** (single behavior change) | Steps 6-7 (wireframes) if behavior is text-describable; Step 4 (tech review) if no codebase impact | Keyboard shortcut, sort order |
 
 When skipping steps, note what was skipped and why in the spec's Overview section.
@@ -94,9 +94,8 @@ Create a worktree at the start. All spec artifacts are written directly in it.
 ```bash
 REPO_ROOT="$(pwd)"
 # If branch already exists (e.g., abandoned previous session):
-# Deletes local branch only. If a remote branch exists from a previous
-# session, also run: git push origin --delete docs/<feature>-spec 2>/dev/null || true
 git branch -D docs/<feature>-spec 2>/dev/null || true
+git push origin --delete docs/<feature>-spec 2>/dev/null || true
 git worktree add .claude/worktrees/docs-<feature>-spec -b docs/<feature>-spec main
 cd .claude/worktrees/docs-<feature>-spec
 mkdir -p docs/specs/<feature>
@@ -120,10 +119,12 @@ Key things to discover:
 - UI patterns already in use (libraries, conventions)
 - What can be reused vs. what needs to be built
 
-**Persist the output**: Write a concise exploration summary to
-`docs/specs/<feature>/exploration-notes.md` in the worktree. This file is
-consumed by the technical reviewers in Steps 4 and 10 (avoids duplicate
-exploration) and deleted before the final commit.
+**Persist the output**: Collect the Explore subagent's output and write a
+concise exploration summary to
+`<worktree-absolute-path>/docs/specs/<feature>/exploration-notes.md`.
+Use an absolute path (the subagent's cwd may differ from the worktree).
+This file is consumed by the technical reviewers in Steps 4 and 10 (avoids
+duplicate exploration) and deleted before the final commit.
 
 Share findings with the user as a brief summary before moving to decisions.
 
@@ -228,6 +229,10 @@ If everything is feasible: "LGTM — all items feasible."
 If the technical reviewer flags items as infeasible, adjust scope and re-run
 the UX reviewer (Step 3) to verify the adjusted scope still makes product sense.
 
+**Convergence criterion**: The technical reviewer returns LGTM (or only
+LOW-severity items) AND the UX reviewer confirms the adjusted scope still
+makes product sense.
+
 **Loop cap**: Max 3 rounds of 3↔4 iteration. If convergence is not reached
 after 3 rounds, present remaining conflicts to the user for a final decision.
 
@@ -266,9 +271,13 @@ Cover these categories as needed (not every feature needs all five):
 Write each wireframe as a self-contained HTML file in `/tmp/`, using inline CSS.
 Dark theme, system font stack, realistic sample data.
 
-**Capture script** (auto-measures document height, prevents bottom clipping):
+**Capture script** (auto-measures document height, prevents bottom clipping).
+Run from the worktree root (`cd` into the worktree first) so the relative
+output path resolves correctly:
 
 ```bash
+REPO_ROOT="$(git worktree list --porcelain | head -1 | sed 's/worktree //')"
+cd "$REPO_ROOT/.claude/worktrees/docs-<feature>-spec"
 bash "$REPO_ROOT/.claude/skills/planning/capture-wireframe.sh" \
   /tmp/wireframe-<name>.html \
   docs/specs/<feature>/wireframe-<name>.png \
@@ -321,9 +330,7 @@ Minimal starting point:
 </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Main wireframe content here -->
-  </div>
+  <!-- Main wireframe content here -->
   <div class="annotation">
     <strong>Spec Notes:</strong> Behavioral details and constraints.
   </div>
@@ -347,11 +354,10 @@ Agent(subagent_type="Explore", model="sonnet")
 ```
 
 Use `Explore` type (read-only) to prevent codebase access.
-Pass the decision summary AND the absolute paths to wireframe PNGs:
-```
-/path/to/worktree/docs/specs/<feature>/wireframe-*.png
-```
-The subagent must Read each PNG file to see its visual content.
+Pass the decision summary AND the **expanded** absolute paths to each wireframe
+PNG (list them explicitly — do not pass a glob pattern, because the Explore
+subagent cannot expand globs via Bash). The subagent must Read each PNG file
+to see its visual content.
 
 #### Wireframe Completeness Reviewer Persona
 
@@ -493,8 +499,7 @@ the user for explicit decision.
 1. Run 2 parallel reviewers → merge findings (deduplicate)
 2. Present merged findings to user, propose fixes, get decisions
 3. Apply fixes to spec **and update affected wireframes** (if a fix changes
-   visual behavior, regenerate the relevant wireframe — see Step 6 modification
-   strategy)
+   visual behavior, regenerate the relevant wireframe — see the "Wireframe Modification Strategy" subsection in Step 6)
 4. Run 1 more review round as convergence check
 
 **Convergence criteria**: HIGH = 0 and new MEDIUMs are at detail level (exact
@@ -575,8 +580,8 @@ the user for explicit decision.
 1. Run 2 parallel reviewers → merge findings (deduplicate)
 2. Present merged findings to user, propose adjustments
 3. Apply agreed fixes to spec **and update affected wireframes** (if a fix
-   changes visual behavior, regenerate the relevant wireframe — see Step 6
-   modification strategy)
+   changes visual behavior, regenerate the relevant wireframe — see the
+   "Wireframe Modification Strategy" subsection in Step 6)
 4. Run 1 more review round as convergence check
 
 **Convergence criteria**: Same as Step 9 — HIGH = 0 and new MEDIUMs are at
@@ -597,6 +602,7 @@ proceed (do not re-enter Step 9's full loop).
 From the worktree:
 
 ```bash
+REPO_ROOT="$(git worktree list --porcelain | head -1 | sed 's/worktree //')"
 cd "$REPO_ROOT/.claude/worktrees/docs-<feature>-spec"
 
 # Add only spec and wireframes (exclude exploration-notes.md scratch file)
@@ -631,14 +637,17 @@ The PR is now ready for user review. This is a natural pause point.
 
 When the user provides feedback:
 1. Apply changes to spec **and update affected wireframes** (if feedback changes
-   visual behavior, regenerate the relevant wireframe — see Step 6 modification
-   strategy)
-2. Commit and push
-3. If changes are substantial (new behaviors, scope changes), re-run ONE round
-   of spec quality review (Step 9) as sanity check
+   visual behavior, regenerate the relevant wireframe — see the "Wireframe Modification Strategy" subsection in Step 6)
+2. Commit and push (same `git add` pattern as Step 11 — add only the spec
+   `.md` and `wireframe-*.png` files, do not include `exploration-notes.md`)
+3. If changes are substantial (new user-visible behaviors added, or scope
+   changed — not just wording clarifications or typo fixes), re-run ONE round
+   of spec quality review (Step 9) as sanity check. This is a standalone
+   round, not counted against Step 9's 3-round cap.
 4. If changes are substantial AND affect technical feasibility (new data
    requirements, changed API surface, etc.), also re-run ONE round of
-   Step 10 (technical review)
+   Step 10 (technical review). This is a standalone round, not counted
+   against Step 10's 3-round cap.
 5. When the user approves, proceed to Step 13
 
 ### Step 13: Implementation Issues and Follow-Up Issues
@@ -744,14 +753,16 @@ EOF
 After all issues are created:
 
 ```bash
+REPO_ROOT="$(git worktree list --porcelain | head -1 | sed 's/worktree //')"
+
 # Commit the back-references added to the spec
 cd "$REPO_ROOT/.claude/worktrees/docs-<feature>-spec"
 git add docs/specs/<feature>/<feature>.md
 git commit -m "docs: add issue references to <feature> spec"
 git push
 
-# Remove exploration scratch file (no longer needed after issue creation)
-rm -f docs/specs/<feature>/exploration-notes.md
+# Remove exploration scratch file (handles both tracked and untracked cases)
+git rm -f docs/specs/<feature>/exploration-notes.md 2>/dev/null || rm -f docs/specs/<feature>/exploration-notes.md
 
 # Now clean up the worktree (all feedback incorporated, issues created)
 cd "$REPO_ROOT"
