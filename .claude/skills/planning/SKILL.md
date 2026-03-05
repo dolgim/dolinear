@@ -815,9 +815,8 @@ These patterns caused problems in practice and should be avoided:
    Human review feedback requires a workspace. Clean up only after Step 13
    (all issues created, back-references committed).
 
-9. **Running this skill as a teammate**: When the skill executor is itself a
-   teammate on a team, `Agent()` calls spawn new teammates (async messages)
-   instead of isolated subagents (synchronous return). If executing as a
-   teammate, either perform reviews inline (self-review using the persona
-   prompts) or coordinate with spawned teammates via messages. The skill is
-   designed for solo agent execution.
+9. **Passing `team_name` when spawning reviewer subagents**: The `Agent()` calls
+   in this skill (Steps 1, 3, 4, 7, 9, 10, 13a) are intended to spawn isolated,
+   synchronous subagents that return results directly. Do NOT pass `team_name`
+   or `name` parameters — doing so turns them into async teammates on a team,
+   breaking the expected synchronous workflow.
