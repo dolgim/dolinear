@@ -30,15 +30,15 @@ directory, and PR title.
 Section headers like `이번에 구현`, `후속 이슈` are Korean. The SKILL.md itself
 is maintained in English per project convention.
 
-**Repo root path**: Before entering the worktree, capture the repo root:
+**Repo root path**: Use this snippet to get the main repo root from anywhere
+(works from inside a worktree too):
 ```bash
-REPO_ROOT="$(pwd)"
+REPO_ROOT="$(git worktree list --porcelain | head -1 | sed 's/worktree //')"
 ```
 Use `$REPO_ROOT` when referencing skill scripts or files outside the worktree.
 
 **Shell state**: Shell state does not persist between Bash tool calls.
-Re-set `REPO_ROOT` at the start of each bash block that references it, or use
-absolute paths.
+Re-set `REPO_ROOT` at the start of each bash block that references it.
 
 ## Workflow
 
@@ -79,7 +79,7 @@ use the table below for principled exceptions:
 |---|---|---|
 | **Large** (new page, multi-component) | None — run all steps | Kanban board, settings page |
 | **Medium** (new component in existing page) | Step 6: limit to 1-2 wireframes. Step 7 (completeness review): optional | Filter bar, bulk actions |
-| **Small** (single behavior change) | Steps 6-7 (wireframes) if behavior is text-describable; Step 4 (tech review) if no codebase impact | Keyboard shortcut, sort order |
+| **Small** (single behavior change) | Steps 6-7 (wireframes) if behavior is text-describable; Step 4 (tech review) if no changes to existing architecture or data model | Keyboard shortcut, sort order |
 
 When skipping steps, note what was skipped and why in the spec's Overview section.
 
@@ -92,7 +92,7 @@ When skipping steps, note what was skipped and why in the spec's Overview sectio
 Create a worktree at the start. All spec artifacts are written directly in it.
 
 ```bash
-REPO_ROOT="$(pwd)"
+REPO_ROOT="$(git worktree list --porcelain | head -1 | sed 's/worktree //')"
 # If branch already exists (e.g., abandoned previous session):
 git branch -D docs/<feature>-spec 2>/dev/null || true
 git push origin --delete docs/<feature>-spec 2>/dev/null || true
@@ -125,6 +125,11 @@ concise exploration summary to
 Use an absolute path (the subagent's cwd may differ from the worktree).
 This file is consumed by the technical reviewers in Steps 4 and 10 (avoids
 duplicate exploration) and deleted before the final commit.
+
+**If the feature already partially exists**: Report what's already implemented
+and what's missing. In Step 2, use this as the starting point — decisions focus
+on extending or refactoring the existing implementation, not building from
+scratch. The scope section should clarify what's reused vs. new.
 
 Share findings with the user as a brief summary before moving to decisions.
 
@@ -809,3 +814,10 @@ These patterns caused problems in practice and should be avoided:
 8. **Premature worktree cleanup**: Do not remove the worktree after PR creation.
    Human review feedback requires a workspace. Clean up only after Step 13
    (all issues created, back-references committed).
+
+9. **Running this skill as a teammate**: When the skill executor is itself a
+   teammate on a team, `Agent()` calls spawn new teammates (async messages)
+   instead of isolated subagents (synchronous return). If executing as a
+   teammate, either perform reviews inline (self-review using the persona
+   prompts) or coordinate with spawned teammates via messages. The skill is
+   designed for solo agent execution.
